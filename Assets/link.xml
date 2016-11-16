@@ -1,0 +1,6 @@
+﻿<linker>
+  <assembly fullname="BehaviorDesignerRuntime" preserve="all">
+    <namespace fullname="BehaviorDesigner.Runtime " preserve="all">
+    </namespace>
+  </assembly>
+</linker>
