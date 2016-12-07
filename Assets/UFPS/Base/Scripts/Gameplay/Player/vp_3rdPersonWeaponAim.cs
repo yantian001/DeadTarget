@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 //
 //	vp_3rdPersonWeaponAim.cs
-//	© VisionPunk. All Rights Reserved.
+//	?VisionPunk. All Rights Reserved.
 //	https://twitter.com/VisionPunk
 //	http://www.visionpunk.com
 //
@@ -57,7 +57,7 @@ public class vp_3rdPersonWeaponAim : MonoBehaviour
 #endif
 
 #if UNITY_EDITOR
-	[vp_HelpBox("PLEASE NOTE:\n\n• This gameobject should be assigned to the 'Rendering -> 3rd Person Weapon' slot of a vp_Weapon or vp_FPWeapon component.\n\n• This script has a purely cosmetical function and does not affect gameplay in any way (!). To change gameplay-accuracy, look for the 'Spread' parameter on the 1st person weapon's shooter component.", UnityEditor.MessageType.Info, typeof(vp_3rdPersonWeaponAim), null, false, vp_PropertyDrawerUtility.Space.Nothing)]
+	[vp_HelpBox("PLEASE NOTE:\n\n?This gameobject should be assigned to the 'Rendering -> 3rd Person Weapon' slot of a vp_Weapon or vp_FPWeapon component.\n\n?This script has a purely cosmetical function and does not affect gameplay in any way (!). To change gameplay-accuracy, look for the 'Spread' parameter on the 1st person weapon's shooter component.", UnityEditor.MessageType.Info, typeof(vp_3rdPersonWeaponAim), null, false, vp_PropertyDrawerUtility.Space.Nothing)]
 	public float helpbox;
 #endif
 
