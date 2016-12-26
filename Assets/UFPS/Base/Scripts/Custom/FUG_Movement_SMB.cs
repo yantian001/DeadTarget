@@ -7,14 +7,13 @@ public class FUG_Movement_SMB : StateMachineBehaviour
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-        Debug.Log("StateMachine Enter!");
+       // Debug.Log("StateMachine Enter!");
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateExit(animator, stateInfo, layerIndex);
-        Debug.Log("StateMachine Exit!");
-
+       // Debug.Log("StateMachine Exit!");
         animator.SendMessage("Hit1_Complete");
     }
 

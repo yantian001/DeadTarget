@@ -177,10 +177,15 @@ public class vp_DamageHandler : MonoBehaviour
         // NOTE: this check is temporary and will be removed in the future
         CheckForObsoleteParams();
 
-        Instances.Add(GetComponent<Collider>(), this);
+        // Instances.Add(GetComponent<Collider>(), this);
 
     }
 
+    protected virtual void CacheColider()
+    {
+        if (GetComponent<Collider>())
+            Instances.Add(GetComponent<Collider>(), this);
+    }
 
     /// <summary>
     /// 
@@ -253,7 +258,7 @@ public class vp_DamageHandler : MonoBehaviour
         }
         else
         {
-            SendMessage("Injured", SendMessageOptions.DontRequireReceiver);
+            SendMessage("Injured", damageInfo, SendMessageOptions.DontRequireReceiver);
         }
 
     }

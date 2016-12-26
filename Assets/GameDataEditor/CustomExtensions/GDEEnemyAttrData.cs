@@ -16,158 +16,149 @@ namespace GameDataEditor
     public class GDEEnemyAttrData : IGDEData
     {
         private static string IDKey = "ID";
-        private int _ID;
+		private int _ID;
         public int ID
         {
             get { return _ID; }
-            set
-            {
+            set {
                 if (_ID != value)
                 {
                     _ID = value;
-                    GDEDataManager.SetInt(_key + "_" + IDKey, _ID);
+                    GDEDataManager.SetInt(_key+"_"+IDKey, _ID);
                 }
             }
         }
 
         private static string LevelKey = "Level";
-        private int _Level;
+		private int _Level;
         public int Level
         {
             get { return _Level; }
-            set
-            {
+            set {
                 if (_Level != value)
                 {
                     _Level = value;
-                    GDEDataManager.SetInt(_key + "_" + LevelKey, _Level);
+                    GDEDataManager.SetInt(_key+"_"+LevelKey, _Level);
                 }
             }
         }
 
         private static string HPKey = "HP";
-        private int _HP;
+		private int _HP;
         public int HP
         {
             get { return _HP; }
-            set
-            {
+            set {
                 if (_HP != value)
                 {
                     _HP = value;
-                    GDEDataManager.SetInt(_key + "_" + HPKey, _HP);
+                    GDEDataManager.SetInt(_key+"_"+HPKey, _HP);
                 }
             }
         }
 
         private static string PowerKey = "Power";
-        private int _Power;
+		private int _Power;
         public int Power
         {
             get { return _Power; }
-            set
-            {
+            set {
                 if (_Power != value)
                 {
                     _Power = value;
-                    GDEDataManager.SetInt(_key + "_" + PowerKey, _Power);
+                    GDEDataManager.SetInt(_key+"_"+PowerKey, _Power);
                 }
             }
         }
 
         private static string ClipKey = "Clip";
-        private int _Clip;
+		private int _Clip;
         public int Clip
         {
             get { return _Clip; }
-            set
-            {
+            set {
                 if (_Clip != value)
                 {
                     _Clip = value;
-                    GDEDataManager.SetInt(_key + "_" + ClipKey, _Clip);
+                    GDEDataManager.SetInt(_key+"_"+ClipKey, _Clip);
                 }
             }
         }
 
         private static string FireRateKey = "FireRate";
-        private float _FireRate;
+		private float _FireRate;
         public float FireRate
         {
-            get { return 1f / _FireRate; }
-            set
-            {
+            get { return _FireRate; }
+            set {
                 if (_FireRate != value)
                 {
                     _FireRate = value;
-                    GDEDataManager.SetFloat(_key + "_" + FireRateKey, _FireRate);
+                    GDEDataManager.SetFloat(_key+"_"+FireRateKey, _FireRate);
                 }
             }
         }
 
         private static string AvoidRateKey = "AvoidRate";
-        private float _AvoidRate;
+		private float _AvoidRate;
         public float AvoidRate
         {
             get { return _AvoidRate; }
-            set
-            {
+            set {
                 if (_AvoidRate != value)
                 {
                     _AvoidRate = value;
-                    GDEDataManager.SetFloat(_key + "_" + AvoidRateKey, _AvoidRate);
+                    GDEDataManager.SetFloat(_key+"_"+AvoidRateKey, _AvoidRate);
                 }
             }
         }
 
         private static string HitRateKey = "HitRate";
-        private float _HitRate;
+		private float _HitRate;
         public float HitRate
         {
             get { return _HitRate; }
-            set
-            {
+            set {
                 if (_HitRate != value)
                 {
                     _HitRate = value;
-                    GDEDataManager.SetFloat(_key + "_" + HitRateKey, _HitRate);
+                    GDEDataManager.SetFloat(_key+"_"+HitRateKey, _HitRate);
                 }
             }
         }
 
         private static string NameKey = "Name";
-        private string _Name;
+		private string _Name;
         public string Name
         {
             get { return _Name; }
-            set
-            {
+            set {
                 if (_Name != value)
                 {
                     _Name = value;
-                    GDEDataManager.SetString(_key + "_" + NameKey, _Name);
+                    GDEDataManager.SetString(_key+"_"+NameKey, _Name);
                 }
             }
         }
 
         public GDEEnemyAttrData()
-        {
-            _key = string.Empty;
-        }
+		{
+			_key = string.Empty;
+		}
 
-        public GDEEnemyAttrData(string key)
-        {
-            _key = key;
-        }
-
+		public GDEEnemyAttrData(string key)
+		{
+			_key = key;
+		}
+		
         public override void LoadFromDict(string dataKey, Dictionary<string, object> dict)
         {
             _key = dataKey;
 
-            if (dict == null)
-                LoadFromSavedData(dataKey);
-            else
-            {
+			if (dict == null)
+				LoadFromSavedData(dataKey);
+			else
+			{
                 dict.TryGetInt(IDKey, out _ID);
                 dict.TryGetInt(LevelKey, out _Level);
                 dict.TryGetInt(HPKey, out _HP);
@@ -178,23 +169,23 @@ namespace GameDataEditor
                 dict.TryGetFloat(HitRateKey, out _HitRate);
                 dict.TryGetString(NameKey, out _Name);
                 LoadFromSavedData(dataKey);
-            }
-        }
+			}
+		}
 
         public override void LoadFromSavedData(string dataKey)
-        {
-            _key = dataKey;
-
-            _ID = GDEDataManager.GetInt(_key + "_" + IDKey, _ID);
-            _Level = GDEDataManager.GetInt(_key + "_" + LevelKey, _Level);
-            _HP = GDEDataManager.GetInt(_key + "_" + HPKey, _HP);
-            _Power = GDEDataManager.GetInt(_key + "_" + PowerKey, _Power);
-            _Clip = GDEDataManager.GetInt(_key + "_" + ClipKey, _Clip);
-            _FireRate = GDEDataManager.GetFloat(_key + "_" + FireRateKey, _FireRate);
-            _AvoidRate = GDEDataManager.GetFloat(_key + "_" + AvoidRateKey, _AvoidRate);
-            _HitRate = GDEDataManager.GetFloat(_key + "_" + HitRateKey, _HitRate);
-            _Name = GDEDataManager.GetString(_key + "_" + NameKey, _Name);
-        }
+		{
+			_key = dataKey;
+			
+            _ID = GDEDataManager.GetInt(_key+"_"+IDKey, _ID);
+            _Level = GDEDataManager.GetInt(_key+"_"+LevelKey, _Level);
+            _HP = GDEDataManager.GetInt(_key+"_"+HPKey, _HP);
+            _Power = GDEDataManager.GetInt(_key+"_"+PowerKey, _Power);
+            _Clip = GDEDataManager.GetInt(_key+"_"+ClipKey, _Clip);
+            _FireRate = GDEDataManager.GetFloat(_key+"_"+FireRateKey, _FireRate);
+            _AvoidRate = GDEDataManager.GetFloat(_key+"_"+AvoidRateKey, _AvoidRate);
+            _HitRate = GDEDataManager.GetFloat(_key+"_"+HitRateKey, _HitRate);
+            _Name = GDEDataManager.GetString(_key+"_"+NameKey, _Name);
+         }
 
         public void Reset_ID()
         {

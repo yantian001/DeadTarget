@@ -4,11 +4,11 @@ using System.Collections;
 public class FUG_DEMO : MonoBehaviour
 {
 
-    FUG_EnemyEventHandler eventHandler;
+    ZombieEventHandler eventHandler;
     // Use this for initialization
     void Start()
     {
-        eventHandler = GetComponent<FUG_EnemyEventHandler>();
+        eventHandler = GetComponent<ZombieEventHandler>();
         eventHandler.Move.TryStart();
     }
 

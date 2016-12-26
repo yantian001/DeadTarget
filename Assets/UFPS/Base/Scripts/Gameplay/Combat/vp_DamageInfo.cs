@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 //
 //	vp_DamageInfo.cs
-//	© VisionPunk. All Rights Reserved.
+//	?VisionPunk. All Rights Reserved.
 //	https://twitter.com/VisionPunk
 //	http://www.visionpunk.com
 //
@@ -15,46 +15,54 @@ using UnityEngine;
 
 public class vp_DamageInfo
 {
-	public float Damage;				// how much damage was done?
-	public Transform Source;			// from what object did it come (directly)? common use: HUD / GUI
-	public Transform OriginalSource;	// what object initially caused this to happen? common use: game logic, score
-	public DamageType Type;				// what type of damage is this?
+    public float Damage;                // how much damage was done?
+    public Transform Source;            // from what object did it come (directly)? common use: HUD / GUI
+    public Transform OriginalSource;    // what object initially caused this to happen? common use: game logic, score
+    public DamageType Type;				// what type of damage is this?
+    public Vector3 Point;               // Where the damage hit?
 
-	public enum DamageType
-	{
-		Unknown,
-		KillZone,
-		Fall,
-		Impact,
-		Bullet,
-		Explosion,
-		// the above are the types represented in the UFPS demo but can be easily
-		// extended: e.g. blunt, electrical, cutting, piercing, freezing, crushing
-		// drowning, gas, acid, freezing, burning, scolding, magical, plasma etc.
-	}
+    public enum DamageType
+    {
+        Unknown,
+        KillZone,
+        Fall,
+        Impact,
+        Bullet,
+        Explosion,
+        // the above are the types represented in the UFPS demo but can be easily
+        // extended: e.g. blunt, electrical, cutting, piercing, freezing, crushing
+        // drowning, gas, acid, freezing, burning, scolding, magical, plasma etc.
+    }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public vp_DamageInfo(float damage, Transform source, DamageType type = DamageType.Unknown)
-	{
-		Damage = damage;
-		Source = source;
-		OriginalSource = source;
-		Type = type;
-	}
+    /// <summary>
+    /// 
+    /// </summary>
+    public vp_DamageInfo(float damage, Transform source, DamageType type = DamageType.Unknown)
+    {
+        Damage = damage;
+        Source = source;
+        OriginalSource = source;
+        Type = type;
+    }
+    public vp_DamageInfo(float damage, Transform source, Vector3 point, DamageType type = DamageType.Unknown)
+    {
+        Damage = damage;
+        Source = source;
+        OriginalSource = source;
+        Type = type;
+        Point = point;
+    }
 
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public vp_DamageInfo(float damage, Transform source, Transform originalSource, DamageType type = DamageType.Unknown)
-	{
-		Damage = damage;
-		Source = source;
-		OriginalSource = originalSource;
-		Type = type;
-	}
+    /// <summary>
+    /// 
+    /// </summary>
+    public vp_DamageInfo(float damage, Transform source, Transform originalSource, DamageType type = DamageType.Unknown)
+    {
+        Damage = damage;
+        Source = source;
+        OriginalSource = originalSource;
+        Type = type;
+    }
 
 
 }
