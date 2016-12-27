@@ -288,7 +288,7 @@ namespace FProject
 
         void Update()
         {
-            Time.timeScale = Mathf.Lerp(Time.timeScale, timeScaleTarget, Time.deltaTime * 10);
+          //  Time.timeScale = Mathf.Lerp(Time.timeScale, timeScaleTarget, Time.deltaTime * 10);
         }
 
         IEnumerator EndGuiShow()

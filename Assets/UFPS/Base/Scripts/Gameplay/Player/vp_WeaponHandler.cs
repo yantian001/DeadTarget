@@ -21,7 +21,7 @@ using System.Collections;
 public class vp_WeaponHandler : MonoBehaviour
 {
 
-	public int StartWeapon = 0;
+	public int StartWeapon = 1;
 
 	// weapon timing
 	public float AttackStateDisableDelay = 0.5f;		// delay until weapon attack state is disabled after firing ends
