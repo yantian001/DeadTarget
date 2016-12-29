@@ -6,6 +6,17 @@ using System;
 using Random = UnityEngine.Random;
 namespace FProject
 {
+    public enum GameStatu
+    {
+        None,
+        Init,
+        InGame,
+        WaitForVedio,
+        GamePaused,
+        GameFailed,
+        GameSuccess
+    }
+
     public class GamePlay : SingletonMono<GamePlay>
     {
         #region Static Member
@@ -48,11 +59,20 @@ namespace FProject
         /// 时间的目标缩放倍数
         /// </summary>
         float timeScaleTarget = 1.0f;
+        /// <summary>
+        /// 游戏状态
+        /// </summary>
+        GameStatu gameStatu = GameStatu.None;
+        /// <summary>
+        /// 游戏纪录,纪录游戏杀敌相关
+        /// </summary>
+        GameRecord record = new GameRecord();
 
         private List<List<GPWave>> gamePlayWaves;
         private List<GDEZombieData> listZombieBattle;
         private List<float> listZombieMoveSpeed;
         private List<Dictionary<int, int>> maxSpwanZombie = new List<Dictionary<int, int>>();
+        private List<ZombineBase> aliveZombies = new List<ZombineBase>();
         #endregion
 
         #region Property
@@ -91,16 +111,6 @@ namespace FProject
         #endregion
 
         #region Custom Method
-        /// <summary>
-        /// 产生僵尸
-        /// </summary>
-        private void SpwanZombie(ZombieModel zombieType, int pointIndex)
-        {
-            if (!playerHandler.Dead.Active)
-            {
-
-            }
-        }
 
         /// <summary>
         /// 获取参数僵尸的点
@@ -127,8 +137,10 @@ namespace FProject
 
         public void Init()
         {
+            SetGameStatu(GameStatu.Init);
             InitBallteData();
             InitZombieWaves();
+            record = new GameRecord();
         }
 
         public void InitBallteData()
@@ -184,6 +196,7 @@ namespace FProject
             currentZombieActive = 0;
             currentZombieAlive = 0;
             activeZombieCounts.Clear();
+            aliveZombies.Clear();
             currentWaveIndex = -1;
             CalculateAllZombieBattle();
         }
@@ -281,37 +294,125 @@ namespace FProject
 
         }
 
+        public void OnEnable()
+        {
+            playerHandler.Register(this);
+        }
+
+        public void OnDisable()
+        {
+            playerHandler.Unregister(this);
+        }
+
+
+
         public void Start()
         {
+            SetGameStatu(GameStatu.InGame);
             StartCoroutine(EndGuiShow());
         }
 
         void Update()
         {
-          //  Time.timeScale = Mathf.Lerp(Time.timeScale, timeScaleTarget, Time.deltaTime * 10);
+
         }
+        #endregion
+
+        #region Player Dead
+
+        public bool CanStart_Dead()
+        {
+            return IsInGame();
+        }
+
+        public void OnStart_Dead()
+        {
+            StopAllZombie();
+            OnStartPlayerDead();
+        }
+
+        public void OnStop_Dead()
+        {
+            this.SetGameStatu(GameStatu.InGame);
+            vp_Timer.In(0.5f, () => { StartAllZombie(); });
+        }
+
+        private void OnStartPlayerDead()
+        {
+            //throw new NotImplementedException();
+            //FUGSDK.Ads.Instance.ShowRewardVedio()
+            SetGameStatu(GameStatu.WaitForVedio);
+            if (FUGSDK.Ads.Instance.HasRewardVedio())
+            {
+                ShowVideoUI();
+            }
+            else
+            {
+                OnDeadVedioPlayed(false);
+            }
+        }
+
+        private void ShowVideoUI()
+        {
+            //throw new NotImplementedException();
+            UIManager.Instance.ShowGameOverVideo(OnVideoMenuClosed);
+        }
+
+        public void OnVideoMenuClosed(bool b)
+        {
+            if (b)
+            {
+                FUGSDK.Ads.Instance.ShowRewardVedio(OnDeadVedioPlayed);
+            }
+            else
+            {
+                OnDeadVedioPlayed(false);
+            }
+        }
+
+
+        public void OnDeadVedioPlayed(bool b)
+        {
+            if (b)
+            {
+                playerHandler.SendMessage("Reset");
+            }
+            else
+            {
+                Debug.Log("Game Failure!");
+                this.Failure();
+            }
+        }
+
+
+        #endregion
+
+
 
         IEnumerator EndGuiShow()
         {
             WaitForSeconds wsCheckWave = new WaitForSeconds(0.1f);
-            while (!isWin)
+            while (true)
             {
-                // Debug.Log("存活:" + currentZombieActive + "还剩:" + currentZombieSpwanRemain);
-                if (currentZombieActive <= 0 && currentZombieSpwanRemain <= 0)
+                if (gameStatu == GameStatu.InGame)
                 {
-                    currentWaveIndex++;
-                    if (currentWaveIndex < numberWaveBallte)
+                    // Debug.Log("存活:" + currentZombieActive + "还剩:" + currentZombieSpwanRemain);
+                    if (currentZombieActive <= 0 && currentZombieSpwanRemain <= 0)
                     {
-                        List<GPWave> waves = gamePlayWaves[currentWaveIndex];
-                        for (int i = 0; i < waves.Count; i++)
+                        currentWaveIndex++;
+                        if (currentWaveIndex < numberWaveBallte)
                         {
-                            currentZombieSpwanRemain += waves[i].remainZombie;
-                        }
-                        var c = StartCoroutine(StartWaveNormal(5f));
+                            List<GPWave> waves = gamePlayWaves[currentWaveIndex];
+                            for (int i = 0; i < waves.Count; i++)
+                            {
+                                currentZombieSpwanRemain += waves[i].remainZombie;
+                            }
+                            var c = StartCoroutine(StartWaveNormal(5f));
 
+                        }
+                        else
+                            this.Win();
                     }
-                    else
-                        this.Win();
                 }
                 yield return wsCheckWave;
             }
@@ -323,11 +424,28 @@ namespace FProject
             // throw new NotImplementedException();
             isWin = true;
             Debug.Log("Win");
-            //Time.timeScale = 0.1f;
+            SetGameStatu(GameStatu.GameSuccess);
             timeScaleTarget = 0.1f;
-            vp_Timer.In(0.5f, () => { timeScaleTarget = 1; });
+            vp_TimeUtility.FadeTimeScale(0.1f, 5f);
+            vp_Timer.In(0.5f, () =>
+            {
+                vp_TimeUtility.FadeTimeScale(1, 5f);
+                vp_Timer.In(0.5f, () =>
+                {
+                    WinAction();
+                });
+            });
         }
 
+        private void WinAction()
+        {
+            UIManager.Instance.ShowWinUI(record);
+        }
+
+        private void Failure()
+        {
+            UIManager.Instance.ShowGameOverUI();
+        }
 
 
         IEnumerator StartWaveNormal(float time)
@@ -405,18 +523,57 @@ namespace FProject
             zomBase.SetCurrentPoint(wayPoint);
             zomBase.SetOriginSpeed(speed);
             zomBase.StartAction(appType, pos);
+            aliveZombies.Add(zomBase);
         }
 
         public void ZombieDie(ZombineBase zombie)
         {
             Debug.Log("Zombie Die");
             currentZombieActive--;
+            record.ZombieKills++;
             if (activeZombieCounts.ContainsKey(zombie.zombieId))
             {
                 activeZombieCounts[zombie.zombieId]--;
             }
+            if (aliveZombies.Contains(zombie))
+            {
+                aliveZombies.Remove(zombie);
+            }
 
         }
+
+        public void StopAllZombie()
+        {
+            for (int i = 0; i < aliveZombies.Count; i++)
+            {
+                aliveZombies[i].StopAction();
+            }
+        }
+
+        public void StartAllZombie()
+        {
+            if (aliveZombies.Count > 0)
+            {
+                for (int i = 0; i < aliveZombies.Count; i++)
+                {
+                    aliveZombies[i].StartAction();
+                }
+            }
+        }
+
+        #region Game Statu
+
+        public void SetGameStatu(GameStatu statu)
+        {
+            this.gameStatu = statu;
+        }
+
+        public bool IsInGame()
+        {
+            return this.gameStatu == GameStatu.InGame;
+        }
+
         #endregion
+
     }
 }

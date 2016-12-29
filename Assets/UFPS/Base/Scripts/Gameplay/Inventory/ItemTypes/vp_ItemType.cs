@@ -42,6 +42,8 @@ public class vp_ItemType : ScriptableObject
 #if UNITY_EDITOR
 	[vp_HelpBox("This object declares an ItemType, or an 'ID card' for an object.\n\n• ItemType objects are basically labels that can be attached to gameobjects (using the vp_ItemIdentifier component) saying \"this is a mace\", \"this is a pistol\", \"this is a machinegun bullet\" and so on.\n\n• The vp_Inventory system uses ItemTypes to keep track of stored items.\n\n• The vp_ItemPickup component use them to decide what type of item to distribute when picked up.\n", UnityEditor.MessageType.Info, null, null, false, vp_PropertyDrawerUtility.Space.Nothing)]
 	public float itemTypeHelp;
+
+   
 #endif
 
 

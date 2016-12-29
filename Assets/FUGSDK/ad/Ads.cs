@@ -106,7 +106,12 @@ namespace FUGSDK
         /// <returns></returns>
         public bool HasRewardVedio()
         {
+#if UNITY_EDITOR
+
+            return true;
+#else
             return ChartboostUtil.Instance.HasGameOverVideo();
+#endif
         }
         /// <summary>
         /// 播放视频奖励广告，并在广告播放完后执行ev方法，
@@ -115,7 +120,14 @@ namespace FUGSDK
         /// <param name="ev"></param>
         public void ShowRewardVedio(RewardVedioClosedEvent ev)
         {
+#if UNITY_EDITOR
+            if (ev != null)
+            {
+                ev(true);
+            }
+#else
             ChartboostUtil.Instance.ShowGameOverVideo(ev);
+#endif
         }
         #endregion
 

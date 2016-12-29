@@ -477,7 +477,7 @@ public class vp_WeaponHandler : MonoBehaviour
 	{
 
 		// abort timers that won't be needed anymore
-		CancelTimers();
+ 		CancelTimers();
 		
 		// prevent these player activities during the weapon switch (unless switching to a melee weapon)
 		if ((WeaponBeingSet == null) || (WeaponBeingSet.AnimationType != (int)vp_Weapon.Type.Melee))

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System;
 
 public class MenuExtension : EditorWindow
@@ -97,8 +99,8 @@ public class MenuExtension : EditorWindow
     private static void SetClickAudio()
     {
         AudioClip ac = Resources.Load<AudioClip>("audio/fx_button1");
-        var buttons= GameObject.FindObjectsOfType<ButtonClick>();
-        foreach(ButtonClick b in buttons)
+        var buttons = GameObject.FindObjectsOfType<ButtonClick>();
+        foreach (ButtonClick b in buttons)
         {
             b.clickClip = ac;
         }

@@ -197,6 +197,16 @@ public class CommonUtils
         return rect;
     }
 
+    public static Transform GetChild(Transform parent, string child)
+    {
+        Transform ret = default(Transform);
+        if ( parent != null)
+        {
+           ret = parent.FindChild(child);
+        }
+        return ret;
+    }
+
     /// <summary>
     /// 获取指定子节点的特定类型的组件
     /// </summary>
@@ -210,6 +220,27 @@ public class CommonUtils
         RectTransform rt = GetChild(parent, child);
         if (rt)
             ret = rt.GetComponent<T>();
+        return ret;
+    }
+
+    /// <summary>
+    /// 获取子节点的特定类型
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="parent"></param>
+    /// <param name="child"></param>
+    /// <returns></returns>
+    public static T GetChildComponent<T>(Transform parent, string child)
+    {
+        T ret = default(T);
+        if(parent)
+        {
+            Transform childT = GetChild(parent, child);
+            if(childT)
+            {
+                 ret = childT.GetComponent<T>();
+            }
+        }
         return ret;
     }
 

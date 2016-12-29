@@ -54,7 +54,6 @@ namespace FProject
             // print("Start Attack");
             if (eventHandler.Move.Active)
                 eventHandler.Move.TryStop();
-
         }
 
         public void OnStop_Attack()
@@ -78,7 +77,7 @@ namespace FProject
                     Attack();
                     timeSinceAttack = 0;
                 }
-                
+
             }
         }
 
@@ -94,6 +93,13 @@ namespace FProject
         void PlayAttackAnimation()
         {
             playerT.GetComponent<vp_FPPlayerDamageHandler>().Damage(new vp_DamageInfo(zombieBase.Damage, this.transform, vp_DamageInfo.DamageType.Bullet));
+        }
+
+        public override void OnStop_Start()
+        {
+            base.OnStop_Start();
+            if (eventHandler.Attack.Active)
+                eventHandler.Attack.TryStop();
         }
     }
 }

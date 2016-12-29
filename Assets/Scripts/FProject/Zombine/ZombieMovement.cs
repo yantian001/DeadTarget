@@ -172,6 +172,17 @@ namespace FProject
                 this.obstacle.enabled = false;
             }
             //}
+
+        }
+
+
+        public override void OnStop_Start()
+        {
+            base.OnStop_Start();
+            if (eventHandler.Move.Active)
+            {
+                eventHandler.Move.TryStop();
+            }
         }
 
         public bool RotateTowardsPosition(Vector3 position, float deltaTime, bool useRigidbody)

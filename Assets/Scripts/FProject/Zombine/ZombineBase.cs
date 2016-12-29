@@ -183,44 +183,6 @@ namespace FProject
         void Appear(AppearanceType appType)
         {
             transform.position = startPos;
-            //NavMeshHit meshHit;
-
-            //if (NavMesh.SamplePosition(transform.position, out meshHit, 2, -1))
-            //{
-            //    transform.position = meshHit.position;
-            //}
-
-            //playerReached = false;
-            //switch (appType)
-            //{
-            //    case AppearanceType.Normal:
-            //        transform.position = navigationStartPos;
-            //        navigationStartReached = true;
-            //        break;
-            //    default:
-            //        navigationStartReached = false;
-            //        //MoveToTranslateStart();
-            //        break;
-            //}
-        }
-
-        private void MoveToTranslateStart()
-        {
-            //throw new NotImplementedException();
-            switch (appearanceType)
-            {
-                case AppearanceType.CreepOut:
-
-                    break;
-            }
-        }
-
-        private void InitNavigation()
-        {
-            if (!eventHandler.Die.Active)
-            {
-                eventHandler.Move.TryStart();
-            }
         }
 
         private bool IsInitialized()
@@ -229,6 +191,19 @@ namespace FProject
             return true;
         }
 
+        public void StopAction()
+        {
+            if (eventHandler.Start.Active)
+            {
+                eventHandler.Start.TryStop();
+            }
+            // throw new NotImplementedException();
+        }
 
+        public void StartAction()
+        {
+            if (!eventHandler.Start.Active)
+                eventHandler.Start.TryStart();
+        }
     }
 }

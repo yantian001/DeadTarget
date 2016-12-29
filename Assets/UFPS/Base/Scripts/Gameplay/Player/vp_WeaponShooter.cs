@@ -310,6 +310,7 @@ public class vp_WeaponShooter : vp_Shooter
 		// everything else checks out
 		if (!Player.DepleteAmmo.Try())
 		{
+            Player.Reload.TryStart();
 			DryFire();
 			return false;
 		}

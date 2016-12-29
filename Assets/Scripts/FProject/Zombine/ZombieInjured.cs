@@ -45,6 +45,7 @@ namespace FProject
 
 
         #region Die
+
         public void OnStart_Die()
         {
             if (eventHandler.Move.Active)
@@ -53,6 +54,21 @@ namespace FProject
                 eventHandler.Attack.TryStop();
             stateManager.SetState(ZombieAnimationState.Die);
         }
+
+
+
         #endregion
+
+        public override void OnStop_Start()
+        {
+            base.OnStop_Start();
+            if(!eventHandler.Die.Active)
+            {
+                if(eventHandler.Injured.Active)
+                {
+                    eventHandler.Injured.TryStop();
+                }
+            }
+        }
     }
 }
