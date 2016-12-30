@@ -167,9 +167,9 @@ public class Player : MonoBehaviour
 	{
 		SceneResult result = GetSceneResult (scene);
 		if (total == -1) {
-			return result.currentLevel + 1;
+			return result.currentLevel ;
 		} else {
-			return Mathf.Min(result.currentLevel + 1,total);
+			return Mathf.Min(result.currentLevel ,total);
 		}
 	}
 
@@ -288,6 +288,12 @@ public class Player : MonoBehaviour
 
     public void SetLevelRecord(int mapid, int level)
     {
+        SceneResult sr = GetSceneResult(mapid);
+        if(sr!=null)
+        {
+            sr.currentLevel = level;
+        }
+        SaveSceneResult2File();
     }
 
     public void OnDisable()

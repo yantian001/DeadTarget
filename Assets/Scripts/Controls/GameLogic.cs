@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
+using FProject;
 
 public class GameLogic : MonoBehaviour
 {
@@ -81,35 +83,33 @@ public class GameLogic : MonoBehaviour
 
     private void OnGameStart(LTEvent obj)
     {
-        if( GameValue.taskData != null && GameValue.taskData.Info.SceneName != "")
-        {
-            GameValue.s_CurrentSceneName = GameValue.taskData.Info.SceneName;
-            Loading(true);
-        }
-            
+        DSystem.s_CurrentSceneName = DSystem.Instance.sceneName;
+        Loading(false);
     }
 
     void OnGameRestart(LTEvent evt)
     {
-        Application.LoadLevel(Application.loadedLevel);
+        // Application.LoadLevel(Application.loadedLevel);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void OnGameNext(LTEvent evt)
     {
-        if (GameValue.IsMapLastLevel(GameValue.mapId, GameValue.level))
-            OnGameMainMenu(evt);
-        else
-        {
-            GameValue.level += 1;
-            Application.LoadLevel(Application.loadedLevel);
-        }
+        OnGameMainMenu(evt);
+        //if (DSystem.IsMapLastLevel(DSystem.mapId, DSystem.level))
+        //    OnGameMainMenu(evt);
+        //else
+        //{
+        //    DSystem.level += 1;
+        //    Application.LoadLevel(Application.loadedLevel);
+        //}
     }
 
 
     void OnGameMainMenu(LTEvent evt)
     {
 
-        GameValue.s_CurrentSceneName = s_MenuScene;
+        DSystem.s_CurrentSceneName = s_MenuScene;
         bool isShowLoading = true;
         if (evt.data != null)
         {
@@ -136,12 +136,12 @@ public class GameLogic : MonoBehaviour
 
     public void Loading(bool showLoading = true)
     {
-        //GameValue.s_CurrentSceneName = GameValue.GetMapSceneName();
+        //DSystem.s_CurrentSceneName = DSystem.GetMapSceneName();
         if (showLoading)
             Application.LoadLevel(s_LoadingScene);
         else
         {
-            Application.LoadLevel(GameValue.s_CurrentSceneName);
+            Application.LoadLevel(DSystem.s_CurrentSceneName);
         }
 
     }
@@ -150,7 +150,7 @@ public class GameLogic : MonoBehaviour
     public void BackToStart(LTEvent evt)
     {
         // GameGlobalValue.s_CurrentScene = 0;
-        GameValue.s_CurrentSceneName = s_StartScene;
+        DSystem.s_CurrentSceneName = s_StartScene;
         Loading(false);
     }
 
@@ -164,7 +164,7 @@ public class GameLogic : MonoBehaviour
                 OnGameQuit(null);
 
             }
-            else if(levelIndex == s_ShopScene)
+            else if (levelIndex == s_ShopScene)
             {
                 OnGameMainMenu(null);
             }
@@ -178,25 +178,25 @@ public class GameLogic : MonoBehaviour
             }
             else
             {
-                if (GameValue.staus == GameStatu.InGame)
-                {
-                    LeanTween.dispatchEvent((int)Events.GAMEPAUSE);
-                }
-                else if (GameValue.staus == GameStatu.Paused)
-                {
-                    LeanTween.dispatchEvent((int)Events.GAMECONTINUE);
-                }
-                else if (GameValue.staus == GameStatu.Completed || GameValue.staus == GameStatu.Failed)
-                {
-                    OnGameMainMenu(null);
-                }
+                //if (DSystem.staus == GameStatu.InGame)
+                //{
+                //    LeanTween.dispatchEvent((int)Events.GAMEPAUSE);
+                //}
+                //else if (DSystem.staus == GameStatu.Paused)
+                //{
+                //    LeanTween.dispatchEvent((int)Events.GAMECONTINUE);
+                //}
+                //else if (DSystem.staus == GameStatu.Completed || DSystem.staus == GameStatu.Failed)
+                //{
+                //    OnGameMainMenu(null);
+                //}
             }
         }
     }
 
     void OnGameQuit(LTEvent evt)
     {
-        if(FUGSDK.Ads.Instance.HasIntersititial())
+        if (FUGSDK.Ads.Instance.HasIntersititial())
         {
             FUGSDK.Ads.Instance.ShowInterstitial(OnInterstitialClosed);
         }

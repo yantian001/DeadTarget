@@ -33,6 +33,48 @@ public class CommonUtils
         }
     }
     /// <summary>
+    /// NGUI - 设置子对象的文本
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="child"></param>
+    /// <param name="text"></param>
+    public static void SetChildText(Transform parent, string child, string text)
+    {
+        var childNode = parent.FindChild(child);
+        if (childNode != null)
+        {
+            var textNode = childNode.GetComponent<UILabel>();
+            if (textNode)
+            {
+                textNode.text = text;
+            }
+        }
+    }
+
+    public static void SetChildTextColor(Transform parent, string child, Color c)
+    {
+        var childT = GetChildComponent<UILabel>(parent, child);
+        if (childT)
+        {
+            childT.color = c;
+        }
+    }
+    /// <summary>
+    /// NGUI - 获取子节点的文本(UILabel)
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="child"></param>
+    /// <returns></returns>
+    public static string GetChildText(Transform parent, string child)
+    {
+        string ret = "";
+        var label = GetChildComponent<UILabel>(parent, child);
+        if (label)
+            ret = label.text;
+        return ret;
+    }
+
+    /// <summary>
     /// 设置文本组件内容
     /// </summary>
     /// <param name="obj"></param>
@@ -200,9 +242,9 @@ public class CommonUtils
     public static Transform GetChild(Transform parent, string child)
     {
         Transform ret = default(Transform);
-        if ( parent != null)
+        if (parent != null)
         {
-           ret = parent.FindChild(child);
+            ret = parent.FindChild(child);
         }
         return ret;
     }
@@ -233,12 +275,12 @@ public class CommonUtils
     public static T GetChildComponent<T>(Transform parent, string child)
     {
         T ret = default(T);
-        if(parent)
+        if (parent)
         {
             Transform childT = GetChild(parent, child);
-            if(childT)
+            if (childT)
             {
-                 ret = childT.GetComponent<T>();
+                ret = childT.GetComponent<T>();
             }
         }
         return ret;

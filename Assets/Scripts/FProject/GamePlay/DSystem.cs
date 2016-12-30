@@ -5,6 +5,7 @@ namespace FProject
 {
     public class DSystem : SingletonMono<DSystem>
     {
+        static public string s_CurrentSceneName;
         /// <summary>
         /// 当前的场景编号
         /// </summary>
@@ -14,6 +15,7 @@ namespace FProject
         /// </summary>
         public int currentLevel = 1;
 
+        public string sceneName = "";
         public void Awake()
         {
             if (SingletonMono<DSystem>.Instance == null)
