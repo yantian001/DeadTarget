@@ -7,6 +7,7 @@ public class UIWeaponItem : MonoBehaviour
     public UILabel lbWeapnName;
     public UISprite spWeaonIcon;
     public GameObject makerEquiped;
+    public GameObject makerLocked;
     public UIToggle toggle;
     GDEWeaponData _weapon;
     public GDEWeaponData Weapon
@@ -32,6 +33,7 @@ public class UIWeaponItem : MonoBehaviour
             lbWeapnName.text = Weapon.name;
             spWeaonIcon.spriteName = Weapon.thumb;
             makerEquiped.SetActive(Weapon.isEquipment);
+            makerLocked.SetActive(!Weapon.isowned);
         }
     }
 
