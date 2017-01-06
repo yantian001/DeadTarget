@@ -3,15 +3,19 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using FProject;
+using GameDataEditor;
 
 public class MenuManager : MonoBehaviour
 {
 
+    public static MenuManager Instance = null;
 
     public GameObject menu;
     public GameObject shop;
     public GameObject itemShop;
     public GameObject weaponShop;
+
+    public Transform weaponParent;
 
     public Transform levelParent;
     protected ChapterItem currentChapterItem;
@@ -29,6 +33,7 @@ public class MenuManager : MonoBehaviour
     void Start()
     {
         UpdateTabDisplay(0);
+
         //Player.CurrentUser.SetLevelRecord(2, 25);
         tempScrollPos = levelParent.parent.position;
         if (autoSearchChapterItems)
@@ -37,9 +42,13 @@ public class MenuManager : MonoBehaviour
         {
             tabs[i].onChange = OnShopTabChange;
         }
+        InitWeapon();
     }
 
-
+    public void Awake()
+    {
+        Instance = this;
+    }
 
     /// <summary>
     /// 更新页面显示
@@ -86,11 +95,17 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+
+
     public void OnBackClicked()
     {
         if (currentTabIndex > 0)
         {
             UpdateTabDisplay(0);
+            foreach (var t in this.tabs)
+            {
+                t.Selected = false;
+            }
         }
         else
         {
@@ -267,5 +282,196 @@ public class MenuManager : MonoBehaviour
         Debug.Log("Select Tab" + index);
         UpdateTabDisplay(index);
     }
+
+    #region Weapon
+
+    //Dictionary<int, UIWeaponItem> weaponItems = new Dictionary<int, UIWeaponItem>();
+    List<UIWeaponItem> weaponItems = new List<UIWeaponItem>();
+    public void InitWeapon()
+    {
+        if (weaponParent.childCount > 1)
+        {
+            for (int i = 1; i < weaponParent.childCount; i++)
+            {
+                Destroy(weaponParent.GetChild(i).gameObject);
+            }
+        }
+
+
+        if (WeaponManager.Instance.Weapons.Count > 0)
+        {
+            weaponItems.Clear();
+            UIWeaponItem item0 = weaponParent.GetChild(0).GetComponent<UIWeaponItem>();
+
+            for (int i = 0; i < WeaponManager.Instance.Weapons.Count; i++)
+            {
+                UIWeaponItem item = null;
+                if (i == 0)
+                {
+                    item = item0;
+
+                }
+                else
+                    item = GameObject.Instantiate<UIWeaponItem>(item0);
+                item.Weapon = WeaponManager.Instance.Weapons[i];
+                item.transform.SetParent(weaponParent);
+                item.transform.localScale = item0.transform.localScale;
+                if (item.Weapon.Id == WeaponManager.Instance.GetCurrentWeaponId())
+                {
+                    item.Select();
+                }
+                weaponItems.Add(item);
+            }
+            weaponParent.GetComponent<UIGrid>().repositionNow = true;
+        }
+
+        // SelectWeapon(WeaponManager.Instance.GetCurrentWeapon());
+    }
+
+    public void UpdateWeaponItemDisplay()
+    {
+        for(int i=0;i<weaponItems.Count;i++)
+        {
+            weaponItems[i].UpdateDisplay();
+        }
+    }
+
+    GDEWeaponData currentWeapon = null;
+    public void SelectWeapon(GDEWeaponData weapon)
+    {
+        if (!(weapon != null && currentWeapon != weapon))
+        {
+            return;
+        }
+        currentWeapon = weapon;
+
+        UpdateWeaponDisplay();
+    }
+
+    void UpdateWeaponDisplay()
+    {
+        //更新武器名字
+        CommonUtils.SetChildText(transform, "shop/weaponshop/lbWeaponName", currentWeapon.name);
+        CommonUtils.SetChildActive(transform, "shop/weaponshop/btnEquip", CanEqWeapon(currentWeapon));
+        CommonUtils.SetChildSpriteName(transform, "shop/weaponshop/spWeaponImage", currentWeapon.thumb);
+
+        //更新武器数值
+        CommonUtils.SetChildSpriteSliderValue(transform, "shop/weaponshop/sdPower/fill", (float)WeaponManager.GetWeaponPower(currentWeapon) / WeaponManager.MAX_POWER);
+        CommonUtils.SetChildSpriteSliderValue(transform, "shop/weaponshop/sdFireRate/fill", (float)WeaponManager.GetWeaponFireRate(currentWeapon) / WeaponManager.MAX_FIRERATE);
+        CommonUtils.SetChildSpriteSliderValue(transform, "shop/weaponshop/sdStab/fill", (float)WeaponManager.GetWeaponStab(currentWeapon) / WeaponManager.MAX_STAB);
+        CommonUtils.SetChildSpriteSliderValue(transform, "shop/weaponshop/sdCapacity/fill", (float)WeaponManager.GetWeaponCapacity(currentWeapon) / WeaponManager.MAX_CAPACITY);
+
+        //更新按钮
+        CommonUtils.SetChildActive(transform, "shop/weaponshop/btnUpdateWeapon", currentWeapon.isowned && WeaponManager.WeaponHasNextLevel(currentWeapon));
+        CommonUtils.SetChildText(transform, "shop/weaponshop/btnUpdateWeapon/Price", WeaponManager.GetWeaponUpgradePrice(currentWeapon).ToString());
+        CommonUtils.SetChildActive(transform, "shop/weaponshop/btnBuyWeapon", !currentWeapon.isowned);
+        CommonUtils.SetChildText(transform, "shop/weaponshop/btnBuyWeapon/Price", currentWeapon.cost.ToString());
+        CommonUtils.SetChildActive(transform, "shop/weaponshop/btnBuyAmmo", currentWeapon.isowned);
+        CommonUtils.SetChildActive(transform, "shop/weaponshop/bullet", currentWeapon.isowned);
+        CommonUtils.SetChildText(transform, "shop/weaponshop/btnBuyAmmo/lbprice", currentWeapon.bulletprice.ToString());
+        CommonUtils.SetChildText(transform, "shop/weaponshop/bullet/Label", string.Format("{0}/{1}", currentWeapon.bullet, WeaponManager.GetWeaponCapacity(currentWeapon)));
+    }
+
+
+    bool CanEqWeapon(GDEWeaponData w)
+    {
+        return w.isowned && !w.isEquipment;
+    }
+
+    public void OnWeaponBuyClicked()
+    {
+        if (currentWeapon != null)
+        {
+            if (!currentWeapon.isowned)
+            {
+                if (Player.CurrentUser.IsMoneyEnough(ConvertUtil.ToInt32(currentWeapon.cost, 1000000)))
+                {
+                    //WeaponManager.Instance.BuyWeapon()
+                    Player.CurrentUser.UseMoney(ConvertUtil.ToInt32(currentWeapon.cost, 1000000));
+                    currentWeapon.isowned = true;
+                    if (currentWeapon.bullet <= 0)
+                    {
+                        currentWeapon.bullet = WeaponManager.GetWeaponCapacity(currentWeapon);
+                    }
+                    UpdateWeaponDisplay();
+                    UpdateWeaponItemDisplay();
+                }
+                else
+                {
+                    MessageTips.Tips("Don't have enough money !!");
+                }
+            }
+        }
+        else
+        {
+            MessageTips.Tips("Please select a weapon first !!");
+        }
+    }
+
+    /// <summary>
+    /// 点击了装备
+    /// </summary>
+    public void OnEquipWeaponClicked()
+    {
+        if (!currentWeapon.isowned)
+        {
+            MessageTips.Tips("Please buy weapon first!!");
+            return;
+        }
+        if (currentWeapon.isEquipment)
+        {
+            MessageTips.Tips("Already equiped this weapon !!");
+
+        }
+        WeaponManager.Instance.EqWeaon(currentWeapon.Id);
+        UpdateWeaponDisplay();
+        UpdateWeaponItemDisplay();
+        // InitWeapon();
+    }
+    /// <summary>
+    /// 升级按钮事件
+    /// </summary>
+    public void OnUpgradeClicked()
+    {
+        if (currentWeapon == null)
+        {
+            MessageTips.Tips("Please select weapon first!!");
+            return;
+        }
+        if (!WeaponManager.WeaponHasNextLevel(currentWeapon))
+        {
+            MessageTips.Tips("Weapon can't upgrade");
+            return;
+        }
+        if (!Player.CurrentUser.IsMoneyEnough(WeaponManager.GetWeaponUpgradePrice(currentWeapon)))
+        {
+            MessageTips.Tips("Don't have enough money !!");
+        }
+
+        WeaponManager.UpgradeWeapon(currentWeapon);
+        UpdateWeaponDisplay();
+    }
+
+    /// <summary>
+    /// 子弹购买点击事件
+    /// </summary>
+    public void OnBuyAmmoClicked()
+    {
+        if (currentWeapon == null)
+        {
+            MessageTips.Tips("Please select weapon first!!");
+            return;
+        }
+        if (WeaponManager.Instance.BuyAmmo(currentWeapon.Id) == -1)
+        {
+            MessageTips.Tips("Don't have enough money !!");
+        }
+        else
+        {
+            UpdateWeaponDisplay();
+        }
+    }
+
+    #endregion
     #endregion
 }

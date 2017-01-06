@@ -108,12 +108,22 @@ public class CommonUtils
             }
         }
     }
-    /// <summary>
-    /// 设置子节点是否可见
-    /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="child"></param>
-    /// <param name="isActive"></param>
+    
+    public static void SetChildSpriteName(Transform parent,string child,string sprite)
+    {
+        if (parent == null || sprite == "" || string.IsNullOrEmpty(child))
+            return;
+        var childNode = parent.FindChild(child);
+        if (childNode != null)
+        {
+            var img = childNode.GetComponent<UISprite>();
+            if (img != null)
+            {
+                img.spriteName = sprite;
+            }
+        }
+    }
+
     public static void SetChildActive(RectTransform parent, string child, bool isActive)
     {
         if (parent == null || string.IsNullOrEmpty(child))
@@ -124,6 +134,24 @@ public class CommonUtils
             childNode.gameObject.SetActive(isActive);
         }
     }
+
+    /// <summary>
+    /// 设置子节点是否可见
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="child"></param>
+    /// <param name="isActive"></param>
+    public static void SetChildActive(Transform parent, string child, bool isActive)
+    {
+        if (parent == null || string.IsNullOrEmpty(child))
+            return;
+        var childNode = parent.FindChild(child);
+        if (childNode != null)
+        {
+            childNode.gameObject.SetActive(isActive);
+        }
+    }
+
 
     /// <summary>
     /// 设置子对象的Slider值
@@ -143,6 +171,26 @@ public class CommonUtils
             }
         }
     }
+
+    /// <summary>
+    /// 设置子对象的Slider值
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="child"></param>
+    /// <param name="value"></param>
+    public static void SetChildSpriteSliderValue(Transform parent, string child, float value)
+    {
+        var childTran = parent.FindChild(child);
+        if (childTran)
+        {
+            UISprite slider = childTran.GetComponentInChildren<UISprite>();
+            if (slider)
+            {
+                slider.fillAmount = value;
+            }
+        }
+    }
+
 
     public static void SetChildButtonActive(RectTransform parent, string child, bool b)
     {

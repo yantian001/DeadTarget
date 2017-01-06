@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class MoneyDisplay : MonoBehaviour
 {
 
-    Text text;
+    UILabel text;
 
     int currentDisplay = 0;
 
@@ -15,7 +15,7 @@ public class MoneyDisplay : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        text = GetComponent<Text>();
+        text = GetComponent<UILabel>();
         currentDisplay = Player.CurrentUser.Money;
         if (text)
         {

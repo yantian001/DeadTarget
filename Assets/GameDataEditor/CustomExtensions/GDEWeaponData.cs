@@ -57,58 +57,16 @@ namespace GameDataEditor
             }
         }
 
-        private static string huoliKey = "huoli";
-		private int _huoli;
-        public int huoli
+        private static string currentlevelKey = "currentlevel";
+		private int _currentlevel;
+        public int currentlevel
         {
-            get { return _huoli; }
+            get { return _currentlevel; }
             set {
-                if (_huoli != value)
+                if (_currentlevel != value)
                 {
-                    _huoli = value;
-                    GDEDataManager.SetInt(_key+"_"+huoliKey, _huoli);
-                }
-            }
-        }
-
-        private static string danjiaKey = "danjia";
-		private int _danjia;
-        public int danjia
-        {
-            get { return _danjia; }
-            set {
-                if (_danjia != value)
-                {
-                    _danjia = value;
-                    GDEDataManager.SetInt(_key+"_"+danjiaKey, _danjia);
-                }
-            }
-        }
-
-        private static string wendingxingKey = "wendingxing";
-		private int _wendingxing;
-        public int wendingxing
-        {
-            get { return _wendingxing; }
-            set {
-                if (_wendingxing != value)
-                {
-                    _wendingxing = value;
-                    GDEDataManager.SetInt(_key+"_"+wendingxingKey, _wendingxing);
-                }
-            }
-        }
-
-        private static string shesuKey = "shesu";
-		private int _shesu;
-        public int shesu
-        {
-            get { return _shesu; }
-            set {
-                if (_shesu != value)
-                {
-                    _shesu = value;
-                    GDEDataManager.SetInt(_key+"_"+shesuKey, _shesu);
+                    _currentlevel = value;
+                    GDEDataManager.SetInt(_key+"_"+currentlevelKey, _currentlevel);
                 }
             }
         }
@@ -123,6 +81,48 @@ namespace GameDataEditor
                 {
                     _Id = value;
                     GDEDataManager.SetInt(_key+"_"+IdKey, _Id);
+                }
+            }
+        }
+
+        private static string bulletKey = "bullet";
+		private int _bullet;
+        public int bullet
+        {
+            get { return _bullet; }
+            set {
+                if (_bullet != value)
+                {
+                    _bullet = value;
+                    GDEDataManager.SetInt(_key+"_"+bulletKey, _bullet);
+                }
+            }
+        }
+
+        private static string bulletpriceKey = "bulletprice";
+		private int _bulletprice;
+        public int bulletprice
+        {
+            get { return _bulletprice; }
+            set {
+                if (_bulletprice != value)
+                {
+                    _bulletprice = value;
+                    GDEDataManager.SetInt(_key+"_"+bulletpriceKey, _bulletprice);
+                }
+            }
+        }
+
+        private static string currentbulletKey = "currentbullet";
+		private int _currentbullet;
+        public int currentbullet
+        {
+            get { return _currentbullet; }
+            set {
+                if (_currentbullet != value)
+                {
+                    _currentbullet = value;
+                    GDEDataManager.SetInt(_key+"_"+currentbulletKey, _currentbullet);
                 }
             }
         }
@@ -155,6 +155,14 @@ namespace GameDataEditor
             }
         }
 
+        private static string levelsKey = "levels";
+		public List<GDEWeaponLevelData>      levels;
+		public void Set_levels()
+        {
+	        GDEDataManager.SetCustomList(_key+"_"+levelsKey, levels);
+		}
+		
+
         public GDEWeaponData()
 		{
 			_key = string.Empty;
@@ -176,13 +184,15 @@ namespace GameDataEditor
                 dict.TryGetBool(isownedKey, out _isowned);
                 dict.TryGetBool(isEquipmentKey, out _isEquipment);
                 dict.TryGetInt(costKey, out _cost);
-                dict.TryGetInt(huoliKey, out _huoli);
-                dict.TryGetInt(danjiaKey, out _danjia);
-                dict.TryGetInt(wendingxingKey, out _wendingxing);
-                dict.TryGetInt(shesuKey, out _shesu);
+                dict.TryGetInt(currentlevelKey, out _currentlevel);
                 dict.TryGetInt(IdKey, out _Id);
+                dict.TryGetInt(bulletKey, out _bullet);
+                dict.TryGetInt(bulletpriceKey, out _bulletprice);
+                dict.TryGetInt(currentbulletKey, out _currentbullet);
                 dict.TryGetString(nameKey, out _name);
                 dict.TryGetString(thumbKey, out _thumb);
+
+                dict.TryGetCustomList(levelsKey, out levels);
                 LoadFromSavedData(dataKey);
 			}
 		}
@@ -194,13 +204,15 @@ namespace GameDataEditor
             _isowned = GDEDataManager.GetBool(_key+"_"+isownedKey, _isowned);
             _isEquipment = GDEDataManager.GetBool(_key+"_"+isEquipmentKey, _isEquipment);
             _cost = GDEDataManager.GetInt(_key+"_"+costKey, _cost);
-            _huoli = GDEDataManager.GetInt(_key+"_"+huoliKey, _huoli);
-            _danjia = GDEDataManager.GetInt(_key+"_"+danjiaKey, _danjia);
-            _wendingxing = GDEDataManager.GetInt(_key+"_"+wendingxingKey, _wendingxing);
-            _shesu = GDEDataManager.GetInt(_key+"_"+shesuKey, _shesu);
+            _currentlevel = GDEDataManager.GetInt(_key+"_"+currentlevelKey, _currentlevel);
             _Id = GDEDataManager.GetInt(_key+"_"+IdKey, _Id);
+            _bullet = GDEDataManager.GetInt(_key+"_"+bulletKey, _bullet);
+            _bulletprice = GDEDataManager.GetInt(_key+"_"+bulletpriceKey, _bulletprice);
+            _currentbullet = GDEDataManager.GetInt(_key+"_"+currentbulletKey, _currentbullet);
             _name = GDEDataManager.GetString(_key+"_"+nameKey, _name);
             _thumb = GDEDataManager.GetString(_key+"_"+thumbKey, _thumb);
+
+            levels = GDEDataManager.GetCustomList(_key+"_"+levelsKey, levels);
          }
 
         public void Reset_isowned()
@@ -230,40 +242,13 @@ namespace GameDataEditor
             dict.TryGetInt(costKey, out _cost);
         }
 
-        public void Reset_huoli()
+        public void Reset_currentlevel()
         {
-            GDEDataManager.ResetToDefault(_key, huoliKey);
+            GDEDataManager.ResetToDefault(_key, currentlevelKey);
 
             Dictionary<string, object> dict;
             GDEDataManager.Get(_key, out dict);
-            dict.TryGetInt(huoliKey, out _huoli);
-        }
-
-        public void Reset_danjia()
-        {
-            GDEDataManager.ResetToDefault(_key, danjiaKey);
-
-            Dictionary<string, object> dict;
-            GDEDataManager.Get(_key, out dict);
-            dict.TryGetInt(danjiaKey, out _danjia);
-        }
-
-        public void Reset_wendingxing()
-        {
-            GDEDataManager.ResetToDefault(_key, wendingxingKey);
-
-            Dictionary<string, object> dict;
-            GDEDataManager.Get(_key, out dict);
-            dict.TryGetInt(wendingxingKey, out _wendingxing);
-        }
-
-        public void Reset_shesu()
-        {
-            GDEDataManager.ResetToDefault(_key, shesuKey);
-
-            Dictionary<string, object> dict;
-            GDEDataManager.Get(_key, out dict);
-            dict.TryGetInt(shesuKey, out _shesu);
+            dict.TryGetInt(currentlevelKey, out _currentlevel);
         }
 
         public void Reset_Id()
@@ -273,6 +258,33 @@ namespace GameDataEditor
             Dictionary<string, object> dict;
             GDEDataManager.Get(_key, out dict);
             dict.TryGetInt(IdKey, out _Id);
+        }
+
+        public void Reset_bullet()
+        {
+            GDEDataManager.ResetToDefault(_key, bulletKey);
+
+            Dictionary<string, object> dict;
+            GDEDataManager.Get(_key, out dict);
+            dict.TryGetInt(bulletKey, out _bullet);
+        }
+
+        public void Reset_bulletprice()
+        {
+            GDEDataManager.ResetToDefault(_key, bulletpriceKey);
+
+            Dictionary<string, object> dict;
+            GDEDataManager.Get(_key, out dict);
+            dict.TryGetInt(bulletpriceKey, out _bulletprice);
+        }
+
+        public void Reset_currentbullet()
+        {
+            GDEDataManager.ResetToDefault(_key, currentbulletKey);
+
+            Dictionary<string, object> dict;
+            GDEDataManager.Get(_key, out dict);
+            dict.TryGetInt(currentbulletKey, out _currentbullet);
         }
 
         public void Reset_name()
@@ -293,19 +305,34 @@ namespace GameDataEditor
             dict.TryGetString(thumbKey, out _thumb);
         }
 
+        public void Reset_levels()
+		{
+			GDEDataManager.ResetToDefault(_key, levelsKey);
+
+			Dictionary<string, object> dict;
+			GDEDataManager.Get(_key, out dict);
+
+			dict.TryGetCustomList(levelsKey, out levels);
+			levels = GDEDataManager.GetCustomList(_key+"_"+levelsKey, levels);
+
+			levels.ForEach(x => x.ResetAll());
+		}
+
         public void ResetAll()
         {
             GDEDataManager.ResetToDefault(_key, costKey);
-            GDEDataManager.ResetToDefault(_key, huoliKey);
-            GDEDataManager.ResetToDefault(_key, danjiaKey);
-            GDEDataManager.ResetToDefault(_key, wendingxingKey);
-            GDEDataManager.ResetToDefault(_key, shesuKey);
+            GDEDataManager.ResetToDefault(_key, currentlevelKey);
+            GDEDataManager.ResetToDefault(_key, levelsKey);
             GDEDataManager.ResetToDefault(_key, nameKey);
             GDEDataManager.ResetToDefault(_key, thumbKey);
             GDEDataManager.ResetToDefault(_key, isownedKey);
             GDEDataManager.ResetToDefault(_key, isEquipmentKey);
             GDEDataManager.ResetToDefault(_key, IdKey);
+            GDEDataManager.ResetToDefault(_key, bulletKey);
+            GDEDataManager.ResetToDefault(_key, bulletpriceKey);
+            GDEDataManager.ResetToDefault(_key, currentbulletKey);
 
+            Reset_levels();
 
             Dictionary<string, object> dict;
             GDEDataManager.Get(_key, out dict);

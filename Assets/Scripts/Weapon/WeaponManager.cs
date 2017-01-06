@@ -5,6 +5,11 @@ using System.Collections.Generic;
 public class WeaponManager : MonoBehaviour
 {
 
+    public static int MAX_POWER = 300;
+    public static int MAX_STAB = 100;
+    public static int MAX_CAPACITY = 100;
+    public static int MAX_FIRERATE = 20;
+
     #region 单例
     private static WeaponManager _instance;
     public static WeaponManager Instance
@@ -32,12 +37,21 @@ public class WeaponManager : MonoBehaviour
 
     List<GDEWeaponData> weapons;
 
+    public List<GDEWeaponData> Weapons
+    {
+        get
+        {
+            return weapons;
+        }
+    }
+
     GDEWeaponData currentWeapon;
 
     GDEBombData bombData;
 
     GDEMedicalData medicalData;
 
+    bool inited = false;
     #region Monobehavior
     void Awake()
     {
@@ -61,6 +75,8 @@ public class WeaponManager : MonoBehaviour
 
     void Init()
     {
+        if (inited)
+            return;
         weapons = new List<GDEWeaponData>();
         //if (GDEDataManager.Init("gde_data"))
         GDEDataManager.Init("gde_data");
@@ -76,7 +92,7 @@ public class WeaponManager : MonoBehaviour
 
                 if (wd != null)
                 {
-                   // wd.ResetAll();
+                    // wd.ResetAll();
                     weapons.Add(wd);
                     if (wd.isEquipment)
                         currentWeapon = wd;
@@ -87,8 +103,9 @@ public class WeaponManager : MonoBehaviour
             // GDEBombData bombData = null;
             GDEDataManager.DataDictionary.TryGetCustom(GDEItemKeys.Bomb_Bomb, out bombData);
             GDEDataManager.DataDictionary.TryGetCustom(GDEItemKeys.Medical_MedicalBox, out medicalData);
-           
+
         }
+        inited = true;
     }
 
     /// <summary>
@@ -98,7 +115,7 @@ public class WeaponManager : MonoBehaviour
     /// <returns></returns>
     public int GetBombCount(int def = 0)
     {
-        if(bombData != null)
+        if (bombData != null)
         {
             def = bombData.number;
         }
@@ -110,7 +127,7 @@ public class WeaponManager : MonoBehaviour
     /// <param name="u"></param>
     public void UseBomb(int u = 1)
     {
-        if(bombData != null && bombData.number > 0)
+        if (bombData != null && bombData.number > 0)
         {
             bombData.number -= u;
         }
@@ -122,7 +139,7 @@ public class WeaponManager : MonoBehaviour
     /// <returns></returns>
     public int GetMedkitCount(int def = 0)
     {
-        if(medicalData != null)
+        if (medicalData != null)
         {
             def = medicalData.number;
         }
@@ -192,6 +209,78 @@ public class WeaponManager : MonoBehaviour
             return false;
         }
     }
+
+    public static bool UpgradeWeapon(GDEWeaponData w)
+    {
+        int price = GetWeaponUpgradePrice(w);
+        if (Player.CurrentUser.IsMoneyEnough(price))
+        {
+            Player.CurrentUser.UseMoney(price);
+            w.currentlevel += 1;
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 购买子弹
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public int BuyAmmo(int id)
+    {
+        GDEWeaponData w = GetWeaponById(id);
+        if (Player.CurrentUser.IsMoneyEnough(w.bulletprice))
+        {
+            Player.CurrentUser.UseMoney(w.bulletprice);
+            w.bullet += WeaponManager.GetWeaponCapacity(w);
+            return w.bulletprice;
+        }
+        else
+            return -1;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public bool TryGiveAmmo(int count)
+    {
+        currentWeapon.currentbullet += count;
+        return true;
+    }
+
+    public bool TryReload()
+    {
+        if (currentWeapon == null)
+            return false;
+        int maxCapacity = WeaponManager.GetWeaponCapacity(currentWeapon);
+        if (currentWeapon.currentbullet >= maxCapacity)
+            return false;
+        int bulletNeed = maxCapacity - currentWeapon.currentbullet;
+        if (currentWeapon.bullet < bulletNeed)
+        {
+            int cost = BuyAmmo(currentWeapon.Id);
+            if (cost == -1)
+            {
+                return false;
+            }
+            LeanTween.dispatchEvent((int)Events.BUYAMMO, cost);
+        }
+        currentWeapon.currentbullet += bulletNeed;
+        currentWeapon.bullet -= bulletNeed;
+        return true;
+    }
+
+    public bool HaveItem(int id)
+    {
+        GDEWeaponData w = GetWeaponById(id);
+        if (w != null && w.isowned)
+        {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region 判断是否达到要求
@@ -208,16 +297,16 @@ public class WeaponManager : MonoBehaviour
             return false;
         }
         return true;
-       // return currentWeapon.GetAttributeCurrentVal(attrid) >= val;
+        // return currentWeapon.GetAttributeCurrentVal(attrid) >= val;
     }
 
     #endregion
 
     void RefreshGun()
     {
-        for(int i=0;i<weapons.Count;i++)
+        for (int i = 0; i < weapons.Count; i++)
         {
-            if(weapons[i].isEquipment)
+            if (weapons[i].isEquipment)
             {
                 currentWeapon = weapons[i];
             }
@@ -239,6 +328,12 @@ public class WeaponManager : MonoBehaviour
             return -1;
     }
 
+
+    public GDEWeaponData GetCurrentWeapon()
+    {
+        return currentWeapon;
+    }
+
     /// <summary>
     /// 通过ID 获取武器
     /// </summary>
@@ -248,5 +343,89 @@ public class WeaponManager : MonoBehaviour
     {
         GDEWeaponData wd = weapons.Find(p => { return p.Id == id; });
         return wd;
+    }
+
+    public static int GetWeaponPower(GDEWeaponData weapon, bool next = false)
+    {
+        int ret = 0;
+        if (next)
+        {
+            if (WeaponHasNextLevel(weapon))
+            {
+                ret = weapon.levels[weapon.currentlevel + 1].huoli;
+            }
+        }
+        else
+        {
+            ret = weapon.levels[weapon.currentlevel].huoli;
+        }
+        return ret;
+    }
+
+    public static int GetWeaponCapacity(GDEWeaponData weapon, bool next = false)
+    {
+        int ret = 0;
+        if (next)
+        {
+            if (WeaponHasNextLevel(weapon))
+            {
+                ret = weapon.levels[weapon.currentlevel + 1].danjia;
+            }
+        }
+        else
+        {
+            ret = weapon.levels[weapon.currentlevel].danjia;
+        }
+        return ret;
+    }
+
+    public static float GetWeaponStab(GDEWeaponData weapon, bool next = false)
+    {
+        float ret = default(float);
+        if (next)
+        {
+            if (WeaponHasNextLevel(weapon))
+            {
+                ret = weapon.levels[weapon.currentlevel + 1].stab;
+            }
+        }
+        else
+        {
+            ret = weapon.levels[weapon.currentlevel].stab;
+        }
+        return ret;
+    }
+
+    public static float GetWeaponFireRate(GDEWeaponData weapon, bool next = false)
+    {
+        float ret = 0;
+        if (next)
+        {
+            if (WeaponHasNextLevel(weapon))
+            {
+                ret = weapon.levels[weapon.currentlevel + 1].firerate;
+            }
+        }
+        else
+        {
+            ret = weapon.levels[weapon.currentlevel].firerate;
+        }
+        return ret;
+    }
+
+
+    public static bool WeaponHasNextLevel(GDEWeaponData w)
+    {
+
+        return w.currentlevel < w.levels.Count - 1;
+    }
+
+    public static int GetWeaponUpgradePrice(GDEWeaponData w)
+    {
+        if (WeaponHasNextLevel(w))
+        {
+            return w.levels[w.currentlevel + 1].cost;
+        }
+        return 0;
     }
 }

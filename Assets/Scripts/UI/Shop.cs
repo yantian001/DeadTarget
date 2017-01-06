@@ -140,18 +140,18 @@ public class Shop : MonoBehaviour {
 
 
 		Slider slider = CommonUtils.GetChildComponent<Slider>(rect,"middle/details/attr/huoli/Slider");
-		slider.value = weapon.huoli;
+	//	slider.value = weapon.huoli;
 
 
 		slider = CommonUtils.GetChildComponent<Slider>(rect,"middle/details/attr/shesu/Slider");
-		slider.value = weapon.shesu;
+	//	slider.value = weapon.shesu;
 
 
 		slider = CommonUtils.GetChildComponent<Slider>(rect,"middle/details/attr/danjia/Slider");
-		slider.value = weapon.danjia;
+	//	slider.value = weapon.danjia;
 
 		slider = CommonUtils.GetChildComponent<Slider>(rect,"middle/details/attr/wendingxing/Slider");
-		slider.value = weapon.wendingxing;
+		//slider.value = weapon.wendingxing;
 
 	}
 

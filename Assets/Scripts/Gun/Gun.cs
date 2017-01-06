@@ -57,12 +57,12 @@ public class Gun : MonoBehaviour
     public void Awake()
     {
         GDEWeaponData weapon = WeaponManager.Instance.GetWeaponById(id);
-        Power = weapon.huoli;
-        Clip = ClipSize = weapon.danjia;
-        FireRate = 1f / weapon.shesu;
-        stab = weapon.wendingxing;
-        if (stab <= 0)
-            stab = 10;
+        //Power = weapon.huoli;
+        //Clip = ClipSize = weapon.danjia;
+        //FireRate = 1f / weapon.shesu;
+        //stab = weapon.wendingxing;
+        //if (stab <= 0)
+        //    stab = 10;
 
 
     }
