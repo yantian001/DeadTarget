@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
-
+using GameDataEditor;
 
 [RequireComponent(typeof(vp_FPWeapon))]
 
@@ -44,7 +44,19 @@ public class vp_FPWeaponShooter : vp_WeaponShooter
 		}
 	}
 
-	protected vp_FPWeapon m_FPWeapon = null;			// the weapon affected by the shooter
+    protected vp_ItemIdentifier m_ItemIdentifier = null;
+    public vp_ItemIdentifier ItemIdentifier
+    {
+        get
+        {
+            if (m_ItemIdentifier == null)
+                m_ItemIdentifier = (vp_ItemIdentifier)Transform.GetComponent(typeof(vp_ItemIdentifier));
+            return m_ItemIdentifier;
+        }
+    }
+
+
+    protected vp_FPWeapon m_FPWeapon = null;			// the weapon affected by the shooter
 	public vp_FPWeapon FPWeapon
 	{
 		get
@@ -101,6 +113,7 @@ public class vp_FPWeaponShooter : vp_WeaponShooter
 		m_NextAllowedFireTime = Time.time;
 
 		ProjectileSpawnDelay = Mathf.Min(ProjectileSpawnDelay, (ProjectileFiringRate - 0.1f));
+        ProjectileDamage = Mathf.CeilToInt((float)WeaponManager.GetWeaponPower(WeaponManager.Instance.GetWeaponById(ItemIdentifier.ID)) / ProjectileCount);
 
 	}
 

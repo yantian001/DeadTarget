@@ -26,6 +26,10 @@ namespace FProject
         /// </summary>
         public GameObject winUI;
 
+        public GameObject controlUI;
+
+        public UISlider zombiesSlider;
+
         public AudioClip numberCliper;
 
         protected Coroutine vedioCounterCoroutine = null;
@@ -196,6 +200,15 @@ namespace FProject
             }
             if (onFinish != null)
                 onFinish();
+        }
+
+        public void UpdateZombieSlider(int _currentSpwanedZombies, int totalZombies)
+        {
+            // throw new NotImplementedException();
+            if (zombiesSlider)
+            {
+                zombiesSlider.value = (float)_currentSpwanedZombies / totalZombies;
+            }
         }
 
         #endregion

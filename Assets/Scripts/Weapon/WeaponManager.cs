@@ -234,6 +234,7 @@ public class WeaponManager : MonoBehaviour
         {
             Player.CurrentUser.UseMoney(w.bulletprice);
             w.bullet += WeaponManager.GetWeaponCapacity(w);
+
             return w.bulletprice;
         }
         else
@@ -248,6 +249,19 @@ public class WeaponManager : MonoBehaviour
     {
         currentWeapon.currentbullet += count;
         return true;
+    }
+
+    public int TryBuyAmmo()
+    {
+        if (Player.CurrentUser.IsMoneyEnough(currentWeapon.bulletprice))
+        {
+            Player.CurrentUser.UseMoney(currentWeapon.bulletprice);
+            currentWeapon.bullet += WeaponManager.GetWeaponCapacity(currentWeapon);
+
+            return currentWeapon.bulletprice;
+        }
+        else
+            return -1;
     }
 
     public bool TryReload()
@@ -265,7 +279,7 @@ public class WeaponManager : MonoBehaviour
             {
                 return false;
             }
-            LeanTween.dispatchEvent((int)Events.BUYAMMO, cost);
+           
         }
         currentWeapon.currentbullet += bulletNeed;
         currentWeapon.bullet -= bulletNeed;

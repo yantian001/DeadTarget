@@ -201,8 +201,25 @@ namespace FProject
             CalculateAllZombieBattle();
         }
 
+        protected int totalZombies = 0;
+        protected int _currentSpwanedZombies = 0;
+        private int CurrentSpwanedZombies
+        {
+            get
+            {
+                return _currentSpwanedZombies;
+            }
+            set
+            {
+                _currentSpwanedZombies = value;
+                UIManager.Instance.UpdateZombieSlider(_currentSpwanedZombies, totalZombies);
+            }
+        }
         private void CalculateAllZombieBattle()
         {
+            totalZombies = 0;
+            CurrentSpwanedZombies = 0;
+
             if (this.gamePlayWaves != null)
             {
                 gamePlayWaves.Clear();
@@ -223,6 +240,7 @@ namespace FProject
                     gpWave.maxZombies = lstmrd[j].MaxZombies;
                     gpWave.zombieId = lstmrd[j].IDZombie;
                     gpWave.totalAmountZombie = lstmrd[j].Number;
+                    totalZombies += gpWave.totalAmountZombie;
                     gpWave.timeWaitforSpwan = lstmrd[j].TimeWaitingSpwan;
                     gpWave.speed = lstmrd[j].Speed;
                     int num2 = lstmrd[j].Position;
@@ -492,6 +510,7 @@ namespace FProject
                 if (zomTran)
                 {
                     wave.remainZombie--;
+                    CurrentSpwanedZombies++;
                     currentZombieActive++;
                     currentZombieSpwanRemain--;
                     if (activeZombieCounts.ContainsKey(wave.zombieId))

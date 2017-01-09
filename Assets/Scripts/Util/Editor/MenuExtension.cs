@@ -30,26 +30,26 @@ public class MenuExtension : EditorWindow
     [MenuItem("FUG/Tools/Add HitBody")]
     private static void AddHitBody()
     {
-        GameObject o = Selection.activeGameObject;
-        Hit_Body hb = o.GetComponentInChildren<Hit_Body>();
-        if (hb)
-        {
-            Collider[] cs = o.GetComponentsInChildren<Collider>();
-            if (cs.Length > 0)
-            {
-                UnityEditorInternal.ComponentUtility.CopyComponent(hb);
-                foreach (Collider c in cs)
-                {
-                    if (c.gameObject.GetComponent<Hit_Body>()) continue;
-                    UnityEditorInternal.ComponentUtility.PasteComponentAsNew(c.gameObject);
-                }
+        //GameObject o = Selection.activeGameObject;
+        //Hit_Body hb = o.GetComponentInChildren<Hit_Body>();
+        //if (hb)
+        //{
+        //    Collider[] cs = o.GetComponentsInChildren<Collider>();
+        //    if (cs.Length > 0)
+        //    {
+        //        UnityEditorInternal.ComponentUtility.CopyComponent(hb);
+        //        foreach (Collider c in cs)
+        //        {
+        //            if (c.gameObject.GetComponent<Hit_Body>()) continue;
+        //            UnityEditorInternal.ComponentUtility.PasteComponentAsNew(c.gameObject);
+        //        }
 
-            }
-        }
-        else
-        {
-            Debug.Log("Dont have Hit_body for copy !");
-        }
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.Log("Dont have Hit_body for copy !");
+        //}
     }
 
     [MenuItem("FUG/Tools/Colider/Delete")]
@@ -98,11 +98,11 @@ public class MenuExtension : EditorWindow
     [MenuItem("FUG/Button/Set Audio")]
     private static void SetClickAudio()
     {
-        AudioClip ac = Resources.Load<AudioClip>("audio/fx_button1");
-        var buttons = GameObject.FindObjectsOfType<ButtonClick>();
-        foreach (ButtonClick b in buttons)
-        {
-            b.clickClip = ac;
-        }
+        //AudioClip ac = Resources.Load<AudioClip>("audio/fx_button1");
+        //var buttons = GameObject.FindObjectsOfType<ButtonClick>();
+        //foreach (ButtonClick b in buttons)
+        //{
+        //    b.clickClip = ac;
+        //}
     }
 }

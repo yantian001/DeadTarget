@@ -129,4 +129,5 @@
     MENULOADED,
     PLAYERDIE,
     BUYAMMO,
+    NEEDAMMO,
 }

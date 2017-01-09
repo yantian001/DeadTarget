@@ -115,6 +115,7 @@ namespace FProject
                 Debug.LogError("Miss Zombie Config!!!");
             }
             TotalHP = (int)(zombieConfig.TotalHP * biasHealth);
+            transform.SendMessage("SetHP", TotalHP, SendMessageOptions.DontRequireReceiver);
             Damage = zombieConfig.Damage;
             AttackSpeed = zombieConfig.AttackSpeed;
             Name = zombieConfig.Name;

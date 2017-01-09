@@ -32,5 +32,10 @@ namespace FProject
                 Instances.Add(coliders[i], this);
             }
         }
+
+        public void SetHP(int hp)
+        {
+            CurrentHealth = MaxHealth = hp;
+        }
     }
 }
