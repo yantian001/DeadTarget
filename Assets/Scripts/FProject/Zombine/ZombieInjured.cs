@@ -39,7 +39,7 @@ namespace FProject
 
         public void Hit1_Complete()
         {
-            print("hit1 complete!");
+          //  print("hit1 complete!");
             eventHandler.Injured.TryStop();
         }
 

@@ -57,7 +57,7 @@ namespace FProject
             {
                 eventHandler.Attack.TryStop();
             }
-            print("Move Start!");
+           // print("Move Start!");
             obstacle.enabled = false;
             vp_Timer.In(0.1f, SetNavigationDestination);
         }
@@ -106,7 +106,7 @@ namespace FProject
 
         public void OnStop_Move()
         {
-            print("Move Stoped");
+            //print("Move Stoped");
             PauseNavigation();
             vp_Timer.In(0.1f, () => { obstacle.enabled = true; });
 
