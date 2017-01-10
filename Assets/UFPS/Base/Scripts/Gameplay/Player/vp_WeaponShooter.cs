@@ -98,10 +98,10 @@ public class vp_WeaponShooter : vp_Shooter
 		m_NextAllowedFireTime = Time.time;
 
 		ProjectileSpawnDelay = Mathf.Min(ProjectileSpawnDelay, (ProjectileFiringRate - 0.1f));
-		m_OriginalProjectileSpawnDelay = ProjectileSpawnDelay;	// backup value since it may change at runtime
+		m_OriginalProjectileSpawnDelay = ProjectileSpawnDelay;  // backup value since it may change at runtime
 
         //get the weapon damage
-      
+        Debug.Log("Awake :"+ name +  this.isActiveAndEnabled);
 
 	}
 

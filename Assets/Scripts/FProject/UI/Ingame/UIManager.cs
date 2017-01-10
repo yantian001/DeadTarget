@@ -28,9 +28,17 @@ namespace FProject
 
         public GameObject controlUI;
 
+        public Transform zombieHPTemplate;
+
         public UISlider zombiesSlider;
 
         public AudioClip numberCliper;
+
+        public Transform comboT;
+
+        public UILabel comboText;
+
+        protected Vector3 comboTextScaleOrigin;
 
         protected Coroutine vedioCounterCoroutine = null;
 
@@ -58,6 +66,14 @@ namespace FProject
             vp_Utility.Activate(pauseUI, false);
             vp_Utility.Activate(gameoverVideoUI, false);
         }
+
+        public void Start()
+        {
+            if (comboText)
+                comboTextScaleOrigin = comboText.transform.localScale;
+        }
+
+
 
         #region Pause
 
@@ -148,6 +164,7 @@ namespace FProject
         {
             //throw new NotImplementedException();
             vp_Utility.Activate(winUI);
+            vp_Utility.Activate(controlUI, false);
             var panel = winUI.GetComponent<UIPanel>();
             panel.alpha = 0;
             TweenAlpha.Begin(winUI, 1f, 1).AddOnFinished(() =>
@@ -208,6 +225,60 @@ namespace FProject
             if (zombiesSlider)
             {
                 zombiesSlider.value = (float)_currentSpwanedZombies / totalZombies;
+            }
+        }
+
+
+        public Transform CreateZombieHealthBar(ZombieDamageHandler handler)
+        {
+            if (zombieHPTemplate)
+            {
+                var t = Transform.Instantiate<Transform>(zombieHPTemplate);
+                t.SetParent(zombieHPTemplate.parent);
+                t.position = zombieHPTemplate.position;
+                t.localPosition = zombieHPTemplate.localPosition;
+                t.localScale = zombieHPTemplate.localScale;
+                return t;
+            }
+            return null;
+        }
+
+        protected bool isComboShowing = false;
+        public void Combo(bool v)
+        {
+            isComboShowing = false;
+            LeanTween.moveLocalX(comboT.gameObject, 60, 0.5f);
+        }
+
+        public void ComboUpdateProgress(float v)
+        {
+            //throw new NotImplementedException();
+            if (isComboShowing)
+            {
+                UISprite spr = comboT.GetComponent<UISprite>();
+                if (spr)
+                {
+                    spr.fillAmount = v;
+                }
+            }
+        }
+
+        internal void ShowCommbo(int currentCombo)
+        {
+            //throw new NotImplementedException();
+            if (!isComboShowing)
+            {
+                isComboShowing = true;
+                LeanTween.moveLocalX(comboT.gameObject, -50, 0.5f);
+
+            }
+            if (comboText)
+            {
+                LeanTween.scale(comboText.gameObject, comboTextScaleOrigin * 1.2f, 0.2f).setOnComplete(() =>
+                {
+                    comboText.text = currentCombo.ToString();
+                    LeanTween.scale(comboText.gameObject, comboTextScaleOrigin, 0.2f);
+                });
             }
         }
 

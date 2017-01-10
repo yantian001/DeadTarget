@@ -68,6 +68,11 @@ namespace FProject
         /// </summary>
         GameRecord record = new GameRecord();
 
+        public float comboInterval = 10f;
+        float currentRemain = 0f;
+        bool isCombo = false;
+        int currentCombo = 0;
+
         private List<List<GPWave>> gamePlayWaves;
         private List<GDEZombieData> listZombieBattle;
         private List<float> listZombieMoveSpeed;
@@ -83,7 +88,12 @@ namespace FProject
             {
                 if (_playerHandler == null)
                 {
-                    _playerHandler = GameObject.FindGameObjectWithTag("Player").GetComponent<vp_PlayerEventHandler>();
+                    var p = GameObject.FindGameObjectWithTag("Player");
+                    if (p)
+                    {
+                        _playerHandler = p.GetComponent<vp_PlayerEventHandler>();
+                    }
+
                 }
                 return _playerHandler;
             }
@@ -319,7 +329,8 @@ namespace FProject
 
         public void OnDisable()
         {
-            playerHandler.Unregister(this);
+            if (playerHandler)
+                playerHandler.Unregister(this);
         }
 
 
@@ -332,7 +343,17 @@ namespace FProject
 
         void Update()
         {
-
+            if (isCombo)
+            {
+                currentRemain -= Time.deltaTime;
+                UIManager.Instance.ComboUpdateProgress(currentRemain / comboInterval);
+                if (currentRemain <= 0)
+                {
+                    isCombo = false;
+                    currentCombo = 0;
+                    UIManager.Instance.Combo(false);
+                }
+            }
         }
         #endregion
 
@@ -457,6 +478,7 @@ namespace FProject
 
         private void WinAction()
         {
+            vp_TimeUtility.TimeScale = 1;
             UIManager.Instance.ShowWinUI(record);
         }
 
@@ -558,7 +580,14 @@ namespace FProject
             {
                 aliveZombies.Remove(zombie);
             }
-
+            currentCombo += 1;
+            isCombo = true;
+            currentRemain = comboInterval;
+            record.MaxCombos = currentCombo;
+            if (currentCombo > 1)
+            {
+                UIManager.Instance.ShowCommbo(currentCombo);
+            }
         }
 
         public void StopAllZombie()

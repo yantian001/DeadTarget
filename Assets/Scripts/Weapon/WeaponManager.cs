@@ -279,7 +279,7 @@ public class WeaponManager : MonoBehaviour
             {
                 return false;
             }
-           
+            LeanTween.dispatchEvent((int)Events.BUYAMMO, cost);
         }
         currentWeapon.currentbullet += bulletNeed;
         currentWeapon.bullet -= bulletNeed;

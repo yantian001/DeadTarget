@@ -11,6 +11,7 @@ namespace FProject
 
     public class ConfigManager : SingletonMono<ConfigManager>
     {
+        public static float HP_RATIO = 0.2f;
         #region 属性
         /// <summary>
         /// 僵尸数据
@@ -192,7 +193,7 @@ namespace FProject
 
         public float GetBiasHealthByLevel(int currentScene, int currentLevel)
         {
-            return 1;
+            return currentScene + currentLevel * HP_RATIO;
             // throw new NotImplementedException();
         }
 
@@ -212,7 +213,7 @@ namespace FProject
             {
                 repearCount = 0;
                 waveIndex = -1;
-               
+
                 while (waveIndex == -1)
                 {
                     waveIndex = Random.Range(fromWave, toWave);

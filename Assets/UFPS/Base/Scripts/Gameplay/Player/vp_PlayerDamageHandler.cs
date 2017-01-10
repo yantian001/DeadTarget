@@ -142,6 +142,7 @@ public class vp_PlayerDamageHandler : vp_DamageHandler
 
 		Player.SetWeapon.Argument = 0;
 		Player.SetWeapon.Start();
+        
 		Player.Dead.Start();
 		Player.Run.Stop();
 		Player.Jump.Stop();

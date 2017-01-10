@@ -171,6 +171,11 @@ namespace FProject
             {
                 this.obstacle.enabled = false;
             }
+            if (eventHandler.Die.Active)
+            {
+                if (aget.enabled)
+                    aget.enabled = false;
+            }
             //}
 
         }

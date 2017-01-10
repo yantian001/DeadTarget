@@ -41,7 +41,7 @@ public class vp_HitscanBullet : MonoBehaviour
     public GameObject m_DustPrefab = null;      // evaporating dust / moisture from the hit material
     public GameObject m_SparkPrefab = null;     // a quick spark, as if hitting stone or metal
     public GameObject m_DebrisPrefab = null;    // pieces of material thrust out of the bullet hole and / or falling to the ground
-
+    public GameObject m_BloodPrefab = null;
     // sound
     protected AudioSource m_Audio = null;
     public List<AudioClip> m_ImpactSounds = new List<AudioClip>();  // list of impact sounds to be randomly played
@@ -145,31 +145,40 @@ public class vp_HitscanBullet : MonoBehaviour
                 m_Transform.localScale = scale;
                 m_Transform.parent = m_Hit.transform;
             }
+            // do damage if possible
+            m_TargetDHandler = vp_DamageHandler.GetDamageHandlerOfCollider(m_Hit.collider); // try to find a damage handler on the target
 
             // if hit object has physics, add the bullet force to it
             Rigidbody body = m_Hit.collider.attachedRigidbody;
             if (body != null && !body.isKinematic)
                 body.AddForceAtPosition(((ray.direction * Force) / Time.timeScale) / vp_TimeUtility.AdjustedTimeScale, m_Hit.point);
 
-            // spawn impact effect
-            if (m_ImpactPrefab != null)
-                vp_Utility.Instantiate(m_ImpactPrefab, m_Transform.position, m_Transform.rotation);
-
-            // spawn dust effect
-            if (m_DustPrefab != null)
-                vp_Utility.Instantiate(m_DustPrefab, m_Transform.position, m_Transform.rotation);
-
-            // spawn spark effect
-            if (m_SparkPrefab != null)
+            if (m_TargetDHandler)
             {
-                if (Random.value < m_SparkFactor)
-                    vp_Utility.Instantiate(m_SparkPrefab, m_Transform.position, m_Transform.rotation);
+                if (m_BloodPrefab)
+                    vp_Utility.Instantiate(m_BloodPrefab, m_Transform.position, m_Transform.rotation);
             }
+            else
+            {
+                // spawn impact effect
+                if (m_ImpactPrefab != null)
+                    vp_Utility.Instantiate(m_ImpactPrefab, m_Transform.position, m_Transform.rotation);
 
-            // spawn debris particle fx
-            if (m_DebrisPrefab != null)
-                vp_Utility.Instantiate(m_DebrisPrefab, m_Transform.position, m_Transform.rotation);
+                // spawn dust effect
+                if (m_DustPrefab != null)
+                    vp_Utility.Instantiate(m_DustPrefab, m_Transform.position, m_Transform.rotation);
 
+                // spawn spark effect
+                if (m_SparkPrefab != null)
+                {
+                    if (Random.value < m_SparkFactor)
+                        vp_Utility.Instantiate(m_SparkPrefab, m_Transform.position, m_Transform.rotation);
+                }
+
+                // spawn debris particle fx
+                if (m_DebrisPrefab != null)
+                    vp_Utility.Instantiate(m_DebrisPrefab, m_Transform.position, m_Transform.rotation);
+            }
             // play impact sound
             if (m_ImpactSounds.Count > 0)
             {
@@ -179,8 +188,6 @@ public class vp_HitscanBullet : MonoBehaviour
                 m_Audio.Play();
             }
 
-            // do damage if possible
-            m_TargetDHandler = vp_DamageHandler.GetDamageHandlerOfCollider(m_Hit.collider); // try to find a damage handler on the target
 
             if ((m_TargetDHandler != null) && (m_Source != null))
             {

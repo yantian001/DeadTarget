@@ -210,7 +210,7 @@ public class vp_FPPlayerDamageHandler : vp_PlayerDamageHandler
 
 		FPPlayer.InputAllowGameplay.Set(true);
 		FPPlayer.HUDDamageFlash.Send(null);
-
+        FPPlayer.SetWeapon.TryStart(WeaponManager.Instance.GetCurrentWeaponId());
 		RefreshColliders();
 
 	}

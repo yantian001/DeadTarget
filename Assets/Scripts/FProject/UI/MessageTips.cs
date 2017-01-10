@@ -11,7 +11,7 @@ public class MessageTips : MonoBehaviour
     public void Awake()
     {
         instance = this;
-        DontDestroyOnLoad(gameObject);
+      //  DontDestroyOnLoad(gameObject);
     }
 
     // Use this for initialization

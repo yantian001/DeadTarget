@@ -160,6 +160,7 @@ public class vp_Shooter : vp_Component
         RefreshDefaultState();
 
         Refresh();
+        Debug.Log(this.isActiveAndEnabled);
 
     }
 

@@ -154,6 +154,7 @@ namespace FProject
                 eventHandler.Creep.Send();
             }
             startPos = pos;
+            transform.SendMessage("SetStartPos", pos, SendMessageOptions.DontRequireReceiver);
             if (this.liveState == ZombieLivingState.ZOMBIE_INIT_PENDING)
             {
                 liveState = ZombieLivingState.ZOMBIE_LIVING;

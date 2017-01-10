@@ -740,6 +740,7 @@ public class vp_FPInventory : vp_Inventory
 	{
 
 		int index = (int)Player.SetWeapon.Argument;
+        
 		if (index == 0)
 			return true;
 
