@@ -113,7 +113,7 @@ public class vp_FPWeaponShooter : vp_WeaponShooter
 		m_NextAllowedFireTime = Time.time;
 
 		ProjectileSpawnDelay = Mathf.Min(ProjectileSpawnDelay, (ProjectileFiringRate - 0.1f));
-        ProjectileDamage = Mathf.CeilToInt((float)WeaponManager.GetWeaponPower(WeaponManager.Instance.GetWeaponById(ItemIdentifier.ID)) / ProjectileCount);
+        ProjectileDamage = Mathf.CeilToInt((float)WeaponManager.GetWeaponPower(WeaponManager.Instance.GetWeaponById(ItemIdentifier.ID)));
 
 	}
 

@@ -63,7 +63,7 @@ namespace ChartboostSDK {
 		// Error when trying to display view (Android only)
 		ErrorDisplayingView = 18,
 		// Prefetching video has not completed (iOS only)
-		PrefetchingIncomplete = 19 
+		PrefetchingIncomplete = 19
 	};
 
 	/// <summary>
@@ -82,15 +82,15 @@ namespace ChartboostSDK {
 
 	/// Enum values for PIA Level tracking
 	public enum CBLevelType : int {
-		// Highest Level reached 
+		// Highest Level reached
 		HIGHEST_LEVEL_REACHED = 1,
-		// Current area level reached 
+		// Current area level reached
 		CURRENT_AREA = 2,
-		// Current character level reached 
+		// Current character level reached
 		CHARACTER_LEVEL = 3,
 		// Other sequential level reached
 		OTHER_SEQUENTIAL = 4,
-		// Current non sequential level reached 
+		// Current non sequential level reached
 		OTHER_NONSEQUENTIAL = 5
 	};
 
@@ -98,7 +98,7 @@ namespace ChartboostSDK {
 	///  Defines standard locations to describe where Chartboost SDK features appear in game.
 	///  Standard locations used to describe where Chartboost features show up in your game
 	///  For best performance, it is highly recommended to use standard locations.
-	///	
+	///
 	///		Benefits include:
 	///		- Higher eCPMs.
 	///		- Control of ad targeting and frequency.
@@ -106,10 +106,10 @@ namespace ChartboostSDK {
 	///
 	/// </summary>
 	public sealed class CBLocation {
-		
-		private readonly string name; 
+
+		private readonly string name;
 		private static Hashtable map = new Hashtable();
-		
+
 		private CBLocation(string name) {
 			this.name = name;
 			map.Add(name, this);
@@ -122,7 +122,7 @@ namespace ChartboostSDK {
 		public override String ToString() {
 			return name;
 		}
-		
+
 		/// Default location
 		public static readonly CBLocation Default = new CBLocation("Default");
 		/// initial startup of your app
@@ -157,7 +157,7 @@ namespace ChartboostSDK {
 		public static readonly CBLocation Settings = new CBLocation("Settings");
 		/// Screen display right before the player exists an app
 		public static readonly CBLocation Quit = new CBLocation("Quit");
-		
+
 		public static CBLocation locationFromName(string name) {
 			if (name == null)
 				return CBLocation.Default;
@@ -175,6 +175,8 @@ namespace ChartboostSDK {
 		public static readonly CBMediation HeyZap = new CBMediation("HeyZap");
 		public static readonly CBMediation MoPub = new CBMediation("MoPub");
 		public static readonly CBMediation Supersonic = new CBMediation("Supersonic");
+		public static readonly CBMediation AdMob = new CBMediation ("AdMob");
+		public static readonly CBMediation HyprMX = new CBMediation ("HyprMX");
 		public static readonly CBMediation Other = new CBMediation("Other");
 
 		public override String ToString() {
@@ -216,13 +218,16 @@ namespace ChartboostSDK {
 		/// <returns>true if execution should proceed, false if not.</returns>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		public static event Func<CBLocation, bool> shouldDisplayInterstitial;
-		
+
 		/// <summary>
 		///  Called after an interstitial has been displayed on the screen.
 		///  Implement to be notified of when an interstitial has
 		///  been displayed on the screen for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
+		#if UNITY_ANDROID
+        [Obsolete("didDisplayInterstitial is not Available on Android Unity, it will be removed in a future release")]
+        #endif
 		public static event Action<CBLocation> didDisplayInterstitial;
 
 		/// <summary>
@@ -248,7 +253,7 @@ namespace ChartboostSDK {
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		public static event Action<CBLocation> didCloseInterstitial;
-		
+
 		/// <summary>
 		///  Called after an interstitial has been dismissed.
 		///  Implement to be notified of when an interstitial has been dismissed for a given CBLocation.
@@ -256,25 +261,25 @@ namespace ChartboostSDK {
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		public static event Action<CBLocation> didDismissInterstitial;
-		
+
 		/// <summary>
 		///   Called after an interstitial has attempted to load from the Chartboost API
-		///   servers but failed. Implement to be notified of when an interstitial has attempted 
+		///   servers but failed. Implement to be notified of when an interstitial has attempted
 		///	  to load from the Chartboost API servers but failed for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		/// <param name="CBImpressionError">The reason for the error defined via a CBImpressionError.</param>
 		public static event Action<CBLocation,CBImpressionError> didFailToLoadInterstitial;
-		
+
 		/// <summary>
 		///  Called after a click is registered, but the user is not forwarded to the IOS App Store.
-		///  Implement to be notified of when a click is registered, but the user is not fowrwarded 
+		///  Implement to be notified of when a click is registered, but the user is not fowrwarded
 		///  to the IOS App Store for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		/// <param name="CBClickError">The reason for the error defined via a CBClickError.</param>
 		public static event Action<CBLocation, CBClickError> didFailToRecordClick;
-		
+
 		/// <summary>
 		///  Called before an "more applications" will be displayed on the screen.
 		///  Implement to control if the Charboost SDK should display an "more applications"
@@ -292,6 +297,9 @@ namespace ChartboostSDK {
 		///  been displayed on the screen for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
+		#if UNITY_ANDROID
+		[Obsolete("didDisplayMoreApps is not Available on Android Unity, it will be removed in a future release")]
+        #endif
 		public static event Action<CBLocation> didDisplayMoreApps;
 
 		/// <summary>
@@ -317,7 +325,7 @@ namespace ChartboostSDK {
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		public static event Action<CBLocation> didCloseMoreApps;
-		
+
 		/// <summary>
 		///  Called after an "more applications" has been dismissed.
 		///  Implement to be notified of when an "more applications" has been dismissed for a given CBLocation.
@@ -328,13 +336,13 @@ namespace ChartboostSDK {
 
 		/// <summary>
 		///   Called after an "more applications" has attempted to load from the Chartboost API
-		///   servers but failed. Implement to be notified of when an "more applications" has attempted 
+		///   servers but failed. Implement to be notified of when an "more applications" has attempted
 		///	  to load from the Chartboost API servers but failed for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		/// <param name="CBImpressionError">The reason for the error defined via a CBImpressionError.</param>
 		public static event Action<CBLocation,CBImpressionError> didFailToLoadMoreApps;
-		
+
 		//// <summary>
 		///  Called before a rewarded video will be displayed on the screen.
 		///  Implement to control if the Charboost SDK should display a rewarded video
@@ -352,6 +360,9 @@ namespace ChartboostSDK {
 		///  been displayed on the screen for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
+		#if UNITY_ANDROID
+		[Obsolete("didDisplayRewardedVideo is not Available on Android Unity, it will be removed in a future release")]
+		#endif
 		public static event Action<CBLocation> didDisplayRewardedVideo;
 
 		/// <summary>
@@ -396,7 +407,7 @@ namespace ChartboostSDK {
 
 		/// <summary>
 		///   Called after a rewarded video has attempted to load from the Chartboost API
-		///   servers but failed. Implement to be notified of when a rewarded video has attempted 
+		///   servers but failed. Implement to be notified of when a rewarded video has attempted
 		///	  to load from the Chartboost API servers but failed for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
@@ -413,7 +424,7 @@ namespace ChartboostSDK {
 
 		/// <summary>
 		///   Called after an in play ad has attempted to load from the Chartboost API
-		///   servers but failed. Implement to be notified of when an in play ad has attempted 
+		///   servers but failed. Implement to be notified of when an in play ad has attempted
 		///	  to load from the Chartboost API servers but failed for a given CBLocation.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
@@ -433,9 +444,9 @@ namespace ChartboostSDK {
 		///  Once confirmed call didPassAgeGate:(BOOL)pass to continue execution.
 		/// </summary>
 		public static event Action didPauseClickForConfirmation;
-		
+
 #if UNITY_IPHONE
-		
+
 		/// <summary>
 		///  Called after the App Store sheet is dismissed, when displaying the embedded app sheet.
 		///  Implement to be notified of when the App Store sheet is dismissed.
@@ -464,7 +475,7 @@ namespace ChartboostSDK {
 		/// <summary>
 		/// Cache an interstitial at the given CBLocation.
 		/// This method will first check if there is a locally cached interstitial
-		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists 
+		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists
 		///	the method will attempt to fetch data from the Chartboost API server.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
@@ -497,11 +508,11 @@ namespace ChartboostSDK {
 		public static void showInterstitial(CBLocation location) {
 			CBExternal.showInterstitial(location);
 		}
-		
+
 		/// <summary>
 		/// Cache an "more applications" at the given CBLocation.
 		/// This method will first check if there is a locally cached "more applications"
-		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists 
+		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists
 		///	the method will attempt to fetch data from the Chartboost API server.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
@@ -520,7 +531,7 @@ namespace ChartboostSDK {
 		public static bool hasMoreApps(CBLocation location) {
 			return CBExternal.hasMoreApps(location);
 		}
-		
+
 		/// <summary>
 		/// Present an "more applications" for the given CBLocation.
 		/// This method will first check if there is a locally cached "more applications"
@@ -538,14 +549,14 @@ namespace ChartboostSDK {
 		/// <summary>
 		/// Cache a rewarded video at the given CBLocation.
 		/// This method will first check if there is a locally cached rewarded video
-		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists 
+		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists
 		///	the method will attempt to fetch data from the Chartboost API server.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		public static void cacheRewardedVideo(CBLocation location) {
 			CBExternal.cacheRewardedVideo(location);
 		}
-		
+
 		/// <summary>
 		/// Determine if a locally cached rewarded video exists for the given CBLocation.
 		/// A return value of true here indicates that the corresponding
@@ -557,7 +568,7 @@ namespace ChartboostSDK {
 		public static bool hasRewardedVideo(CBLocation location) {
 			return CBExternal.hasRewardedVideo(location);
 		}
-		
+
 		/// <summary>
 		/// Present a rewarded video for the given CBLocation.
 		/// This method will first check if there is a locally cached rewarded video
@@ -575,14 +586,14 @@ namespace ChartboostSDK {
 		/// <summary>
 		/// Cache an in play ad at the given CBLocation.
 		/// This method will first check if there is a locally cached in play ad
-		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists 
+		/// for the given CBLocation and, if found, will do nothing. If no locally cached data exists
 		///	the method will attempt to fetch data from the Chartboost API server.
 		/// </summary>
 		/// <param name="location">The location for the Chartboost impression type.</param>
 		public static void cacheInPlay(CBLocation location) {
 			CBExternal.cacheInPlay(location);
 		}
-		
+
 		/// <summary>
 		/// Determine if a locally cached in play ad exists for the given CBLocation.
 		/// A return value of true here indicates that the corresponding
@@ -594,7 +605,7 @@ namespace ChartboostSDK {
 		public static bool hasInPlay(CBLocation location) {
 			return CBExternal.hasInPlay(location);
 		}
-		
+
 		/// <summary>
 		/// Gets an in play ad for the given CBLocation.
 		/// This method will first check if there is a locally cached in play ad
@@ -614,7 +625,7 @@ namespace ChartboostSDK {
 		//////////////////////////////////////////////////////
 
 		/// <summary>
-		/// Confirm if an age gate passed or failed. When specified Chartboost will wait for 
+		/// Confirm if an age gate passed or failed. When specified Chartboost will wait for
 		/// this call before showing the IOS App Store/Google Play Store.
 		///	If you have configured your Chartboost experience to use the age gate feature
 		///	then this method must be executed after the user has confirmed their age.  The Chartboost SDK
@@ -627,15 +638,20 @@ namespace ChartboostSDK {
 				CBExternal.didPassAgeGate(pass);
 			}
 		}
-		
+
 		/// <summary>
-		/// Decide if Chartboost SDK should block for an age gate.
+		/// Decide if Chartboost SDK should block for an age gate. Only available in iOS
 		/// </summary>
 		/// <param name="shouldPause">true if Chartboost should pause for an age gate, false otherwise.</param>
+		#if UNITY_ANDROID
+		[Obsolete("Age Gate is only available in iOS")]
+		#endif
 		public static void setShouldPauseClickForConfirmation(bool shouldPause) {
+			#if UNITY_IPHONE
 			CBExternal.setShouldPauseClickForConfirmation(shouldPause);
+			#endif
 		}
-		
+
 		/// <summary>
 		/// Get the current custom identifier being sent in the POST body for all Chartboost API server requests.
 		/// Use this method to get the custom identifier that can be used later in the Chartboost
@@ -645,7 +661,7 @@ namespace ChartboostSDK {
 		public static String getCustomId() {
 			return CBExternal.getCustomId();
 		}
-		
+
 		/// <summary>
 		/// Set a custom identifier to send in the POST body for all Chartboost API server requests.
 		/// Use this method to set a custom identifier that can be used later in the Chartboost
@@ -655,7 +671,7 @@ namespace ChartboostSDK {
 		public static void setCustomId(String customId) {
 			CBExternal.setCustomId(customId);
 		}
-		
+
 		/// <summary>
 		/// Get the current auto cache behavior (Enabled by default).
 		/// If set to true the Chartboost SDK will automatically attempt to cache an impression
@@ -666,7 +682,7 @@ namespace ChartboostSDK {
 		public static bool getAutoCacheAds() {
 			return CBExternal.getAutoCacheAds();
 		}
-		
+
 		/// <summary>
 		/// Set to enable and disable the auto cache feature (Enabled by default).
 		/// If set to true the Chartboost SDK will automatically attempt to cache an impression
@@ -677,7 +693,7 @@ namespace ChartboostSDK {
 		public static void setAutoCacheAds(bool autoCacheAds) {
 			CBExternal.setAutoCacheAds(autoCacheAds);
 		}
-		
+
 		/// <summary>
 		/// Decide if Chartboost SDK should show interstitials in the first session.
 		/// Set to control if Chartboost SDK can show interstitials in the first session.
@@ -688,7 +704,7 @@ namespace ChartboostSDK {
 		public static void setShouldRequestInterstitialsInFirstSession(bool shouldRequest) {
 			CBExternal.setShouldRequestInterstitialsInFirstSession(shouldRequest);
 		}
-		
+
 		/// <summary>
 		/// Decide if Chartboost SDK should show a loading view while preparing to display the "more applications" UI.
 		///	Set to control if Chartboost SDK should show a loading view while preparing to display the "more applications" UI.
@@ -698,7 +714,7 @@ namespace ChartboostSDK {
 		public static void setShouldDisplayLoadingViewForMoreApps(bool shouldDisplay) {
 			CBExternal.setShouldDisplayLoadingViewForMoreApps(shouldDisplay);
 		}
-		
+
 		/// <summary>
 		/// Decide if Chartboost SDK will attempt to fetch videos from the Chartboost API servers.
 		/// Set to control if Chartboost SDK control if videos should be prefetched.
@@ -720,7 +736,7 @@ namespace ChartboostSDK {
 		public static void trackLevelInfo(String eventLabel, CBLevelType type, int mainLevel, int subLevel, String description) {
 			CBExternal.trackLevelInfo(eventLabel, type, mainLevel, subLevel, description);
 		}
-        
+
         /// <summary>
         /// Send in-game level information to track user current game level activity.
         /// </summary>
@@ -806,7 +822,7 @@ namespace ChartboostSDK {
 		/// Flag to indicate if we are processing an age gate
 		/// </summary>
 		private static bool showingAgeGate;
-		
+
 		/// <summary>
 		/// The chartboost object is a singleton and only needs to be created once.
 		/// If you don't include a Chartboost gameoject in your scene, calling this will create one
@@ -840,15 +856,6 @@ namespace ChartboostSDK {
 
 				DontDestroyOnLoad(gameObject);
 
-				#if UNITY_ANDROID
-     				windowRect = new Rect (0, 0, Screen.width, Screen.height);
-					transparentTexture = new Texture2D(1, 1);
-					transparentTexture.SetPixel(0, 0, Color.clear);
-					transparentTexture.Apply();
-					transparent = new GUIStyle();
-					transparent.normal.background = transparentTexture;
-
-     			#endif
      			Chartboost.showingAgeGate = false;
 			}
 			else {
@@ -878,35 +885,13 @@ namespace ChartboostSDK {
 			#endif
 		}
 
-#if UNITY_ANDROID
-		private Rect windowRect;
-		Texture2D transparentTexture;
-		GUIStyle transparent;
-
-		void OnGUI() {
-			// Developers - feel free to comment out this block of code if you are not using
-			// the old GUI system from pre-4.6
-    		if( !Chartboost.showingAgeGate && isImpressionVisible() )
-    		{
-    			// Android needs a blocker to prevent click throughs for old GUI.
-				// see disableUI for blocking the new GUI via the EventSystem.;
-				GUI.ModalWindow (0, windowRect, BlockerWindow, "", transparent);
-    	    }
-	    }
-#endif
-
-	    // This is the actual window.
-	    void BlockerWindow (int windowID)
-	    {
-		}
-		
 		void OnApplicationPause(bool paused) {
 			#if UNITY_ANDROID
 			// Manage Chartboost plugin lifecycle
 			CBExternal.pause(paused);
 			#endif
 		}
-		
+
 		void OnDisable() {
 			// Shut down the Chartboost plugin
 			#if UNITY_ANDROID
@@ -920,7 +905,7 @@ namespace ChartboostSDK {
 
 		//////////////////////////////////////////////////////
 		/// Managing the events and firing them
-		//////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////
 		private static CBImpressionError impressionErrorFromInt(object errorObj) {
 			bool ios = Application.platform == RuntimePlatform.IPhonePlayer;
 			int error;
@@ -971,33 +956,28 @@ namespace ChartboostSDK {
 			if (didFailToLoadInterstitial != null)
 				didFailToLoadInterstitial(CBLocation.locationFromName(data["location"] as string), error);
 		}
-		
+
 		private void didDismissInterstitialEvent(string location) {
 			doUnityPause(false, false);
-			#if UNITY_ANDROID
-			if(CBExternal.isWebViewEnabled()) {
-				Screen.orientation = ScreenOrientation.AutoRotation;
-			}
-			#endif
 			if (didDismissInterstitial != null)
 				didDismissInterstitial(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didClickInterstitialEvent(string location) {
 			if (didClickInterstitial != null)
 				didClickInterstitial(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didCloseInterstitialEvent(string location) {
 			if (didCloseInterstitial != null)
 				didCloseInterstitial(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didCacheInterstitialEvent(string location) {
 			if (didCacheInterstitial != null)
 				didCacheInterstitial(CBLocation.locationFromName(location));
 		}
-		
+
 		private void shouldDisplayInterstitialEvent(string location) {
 			bool shouldDisplayInterstitialResponse = true;
 			if (shouldDisplayInterstitial != null)
@@ -1011,48 +991,43 @@ namespace ChartboostSDK {
 
 		public void didDisplayInterstitialEvent(string location) {
 			doUnityPause(true, true);
-			#if UNITY_ANDROID
-			if(CBExternal.isWebViewEnabled()) {
-				Screen.orientation = Screen.orientation;
-			}
-			#endif
 			if(didDisplayInterstitial != null)
 			{
 				didDisplayInterstitial(CBLocation.locationFromName(location));
 			}
 		}
-		
+
 		private void didFailToLoadMoreAppsEvent(string dataString) {
 			Hashtable data = (Hashtable)CBJSON.Deserialize(dataString);
 			CBImpressionError error = impressionErrorFromInt(data["errorCode"]);
-			
+
 			if (didFailToLoadMoreApps != null)
 				didFailToLoadMoreApps(CBLocation.locationFromName(data["location"] as string), error);
 		}
-		
+
 		private void didDismissMoreAppsEvent(string location) {
 			doUnityPause(false, false);
-			
+
 			if (didDismissMoreApps != null)
 				didDismissMoreApps(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didClickMoreAppsEvent(string location) {
 			if (didClickMoreApps != null)
 				didClickMoreApps(CBLocation.locationFromName(location));
 		}
-		
-		
+
+
 		private void didCloseMoreAppsEvent(string location) {
 			if (didCloseMoreApps != null)
 				didCloseMoreApps(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didCacheMoreAppsEvent(string location) {
 			if (didCacheMoreApps != null)
 				didCacheMoreApps(CBLocation.locationFromName(location));
 		}
-		
+
 		private void shouldDisplayMoreAppsEvent(string location) {
 			bool shouldDisplayMoreAppsResponse = true;
 			if (shouldDisplayMoreApps != null)
@@ -1071,47 +1046,42 @@ namespace ChartboostSDK {
 				didDisplayMoreApps(CBLocation.locationFromName(location));
 			}
 		}
-		
+
 		private void didFailToRecordClickEvent(string dataString) {
 			Hashtable data = (Hashtable)CBJSON.Deserialize(dataString);
 			CBClickError error = clickErrorFromInt(data["errorCode"]);
 			if (didFailToRecordClick != null)
 				didFailToRecordClick(CBLocation.locationFromName(data["location"] as string), error);
 		}
-		
+
 		private void didFailToLoadRewardedVideoEvent(string dataString) {
 			Hashtable data = (Hashtable)CBJSON.Deserialize(dataString);
 			CBImpressionError error = impressionErrorFromInt(data["errorCode"]);
 			if (didFailToLoadRewardedVideo != null)
 				didFailToLoadRewardedVideo(CBLocation.locationFromName(data["location"] as string), error);
 		}
-		
+
 		private void didDismissRewardedVideoEvent(string location) {
 			doUnityPause(false, false);
-			#if UNITY_ANDROID
-			if(CBExternal.isWebViewEnabled()) {
-				Screen.orientation = ScreenOrientation.AutoRotation;
-			}
-			#endif
 			if (didDismissRewardedVideo != null)
 				didDismissRewardedVideo(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didClickRewardedVideoEvent(string location) {
 			if (didClickRewardedVideo != null)
 				didClickRewardedVideo(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didCloseRewardedVideoEvent(string location) {
 			if (didCloseRewardedVideo != null)
 				didCloseRewardedVideo(CBLocation.locationFromName(location));
 		}
-		
+
 		private void didCacheRewardedVideoEvent(string location) {
 			if (didCacheRewardedVideo != null)
 				didCacheRewardedVideo(CBLocation.locationFromName(location));
 		}
-		
+
 		private void shouldDisplayRewardedVideoEvent(string location) {
 			bool shouldDisplayRewardedVideoResponse = true;
 			if (shouldDisplayRewardedVideo != null)
@@ -1125,7 +1095,7 @@ namespace ChartboostSDK {
 				Chartboost.showRewardedVideo(CBLocation.locationFromName(location));
 			}
 		}
-		
+
 		private void didCompleteRewardedVideoEvent(string dataString) {
 			Hashtable data = (Hashtable)CBJSON.Deserialize(dataString);
 			int reward;
@@ -1134,57 +1104,54 @@ namespace ChartboostSDK {
 			} catch {
 				reward = 0;
 			}
-			
+
 			if (didCompleteRewardedVideo != null)
 				didCompleteRewardedVideo(CBLocation.locationFromName(data["location"] as string), reward);
 		}
 
 		private void didDisplayRewardedVideoEvent(string location) {
 			doUnityPause(true, true);
-			#if UNITY_ANDROID
-			if(CBExternal.isWebViewEnabled()) {
-				Screen.orientation = Screen.orientation;
-			}
-			#endif
-			if (didDisplayRewardedVideo != null) 
+			if (didDisplayRewardedVideo != null)
 			{
 				didDisplayRewardedVideo(CBLocation.locationFromName(location));
 			}
 		}
-		
+
 		private void didCacheInPlayEvent(string location) {
-			if(didCacheInPlay != null) 
+			if(didCacheInPlay != null)
 				didCacheInPlay(CBLocation.locationFromName(location));
 		}
 
 		private void didFailToLoadInPlayEvent(string dataString) {
 			Hashtable data = (Hashtable)CBJSON.Deserialize(dataString);
 			CBImpressionError error = impressionErrorFromInt(data["errorCode"]);
-			
+
 			if (didFailToLoadInPlay != null)
 				didFailToLoadInPlay(CBLocation.locationFromName(data["location"] as string), error);
 		}
 
 		private void didPauseClickForConfirmationEvent() {
+			#if UNITY_IPHONE
 			Chartboost.doShowAgeGate(true);
 			if (didPauseClickForConfirmation != null)
 				didPauseClickForConfirmation();
+			#endif
 		}
 
 		private void willDisplayVideoEvent(string location) {
 			if (willDisplayVideo != null)
 				willDisplayVideo(CBLocation.locationFromName(location));
 		}
-		
+
 #if UNITY_IPHONE
 		private void didCompleteAppStoreSheetFlowEvent(string empty) {
 			if (didCompleteAppStoreSheetFlow != null)
 				didCompleteAppStoreSheetFlow();
 		}
 #endif
-		
+
 		// Utility methods
-		
+
 		/// var used internally for managing game pause state
 		private static bool isPaused = false;
 		private static bool shouldPause = false;
@@ -1203,7 +1170,7 @@ namespace ChartboostSDK {
 				Time.timeScale = 0;
 				isPaused = true;
 				disableUI(true);
-			} 
+			}
 			else if (!pause && isPaused){
 				Time.timeScale = lastTimeScale;
 				isPaused = false;
@@ -1217,7 +1184,7 @@ namespace ChartboostSDK {
 			if(Chartboost.shouldPause) {
 				doUnityPause(!visible, true);
 			}
-			Chartboost.showingAgeGate = visible;			
+			Chartboost.showingAgeGate = visible;
 		}
 
 		private static void disableUI(bool pause) {

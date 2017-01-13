@@ -42,7 +42,7 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
         SingletonMono<T>.singleton = null;
     }
 
-    public void OnDestroy()
+    public virtual void OnDestroy()
     {
         SingletonMono<T>.singleton = null;
     }

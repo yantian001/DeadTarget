@@ -263,15 +263,7 @@ namespace FProject
             return 0;
         }
 
-        /// <summary>
-        /// 获取生命基数
-        /// </summary>
-        /// <param name="missionId"></param>
-        /// <returns></returns>
-        public float GetBiasHealthByMissionId(int missionId)
-        {
-            return 1f;
-        }
+     
         #endregion
     }
 }

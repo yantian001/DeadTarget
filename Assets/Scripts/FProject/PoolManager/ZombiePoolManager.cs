@@ -36,7 +36,7 @@ namespace FProject
             GameObject ob = Resources.Load(path) as GameObject;
             if (ob)
             {
-                var t = (Transform)Transform.Instantiate(ob.transform, Vector3.zero, Quaternion.identity);
+                var t = (Transform)Transform.Instantiate(ob.transform, GamePlay.ZOMBIE_HIDDEN_PLACE, Quaternion.identity);
                 zombiePrefabs.Add(model, t);
             }
         }

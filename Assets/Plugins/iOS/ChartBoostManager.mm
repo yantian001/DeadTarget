@@ -29,16 +29,16 @@ void UnitySendMessage(const char *className, const char *methodName, const char 
 + (ChartBoostManager*)sharedManager
 {
 	static ChartBoostManager *sharedSingleton;
-	
+
 	if (!sharedSingleton)
 		sharedSingleton = [[ChartBoostManager alloc] init];
-	
+
 	return sharedSingleton;
 }
 
 - (id)init {
     self = [super init];
-    
+
     if (self) {
         self.shouldPauseClick = NO;
         self.shouldRequestFirstSession = YES;
@@ -50,7 +50,7 @@ void UnitySendMessage(const char *className, const char *methodName, const char 
         self.unityResponseShouldDisplayRewardedVideo = YES;
         self.unityResponseShouldDisplayMoreApps = YES;
     }
-    
+
     return self;
 }
 
@@ -65,7 +65,7 @@ void UnitySendMessage(const char *className, const char *methodName, const char 
 - (void)startChartBoostWithAppId:(NSString*)appId appSignature:(NSString*)appSignature unityVersion:(NSString *)unityVersion
 {
     [Chartboost setFramework: (CBFramework)CBFrameworkUnity withVersion:unityVersion];
-    [Chartboost setFrameworkVersion:CB_UNITY_SDK_VERSION_STRING];
+    [Chartboost setChartboostWrapperVersion:CB_UNITY_SDK_VERSION_STRING];
     [Chartboost startWithAppId: appId appSignature: appSignature delegate: self];
 }
 
@@ -81,7 +81,7 @@ void UnitySendMessage(const char *className, const char *methodName, const char 
 - (BOOL)shouldDisplayInterstitial:(CBLocation)location
 {
     if (self.hasCheckedWithUnityToDisplayInterstitial)
-    {   
+    {
         self.hasCheckedWithUnityToDisplayInterstitial = false;
         return self.unityResponseShouldDisplayInterstitial;
     }

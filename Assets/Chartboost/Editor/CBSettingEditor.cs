@@ -40,6 +40,7 @@ namespace ChartboostSDK {
 
 		// minimum version of the Google Play Services library project
 		private long MinGmsCoreVersionCode = 4030530;
+		private string googlePlayServicesVersion = "9.0.0";
 
 		private string sError = "Error";
 	    private string sOk = "OK";
@@ -163,39 +164,59 @@ namespace ChartboostSDK {
 	        string sdkPath = GetAndroidSdkPath();
 	        string libProjPath = sdkPath +
 	            FixSlashes("/extras/google/google_play_services/libproject/google-play-services_lib");
-	        string libProjAM = libProjPath + FixSlashes("/AndroidManifest.xml");
+			string libProjPathv30 = sdkPath + 
+				FixSlashes("/extras/google/m2repository/com/google/android/gms/play-services-basement/"
+					+ googlePlayServicesVersion
+					+ "/play-services-basement-" + googlePlayServicesVersion + ".aar");
+			string libProjAM = libProjPath + FixSlashes("/AndroidManifest.xml");
 	        string libProjDestDir = FixSlashes("Assets/Plugins/Android/google-play-services_lib");
-	
-	        // check that Android SDK is there
+			string libProjDestDirv30 = FixSlashes ("Assets/Plugins/Android" 
+				+ "/play-services-basement-" + googlePlayServicesVersion + ".aar");;
+	        
+			// check that Android SDK is there
 	        if (!HasAndroidSdk()) {
 	            Debug.LogError("Android SDK not found.");
 	            EditorUtility.DisplayDialog(sSdkNotFound,
 	                sSdkNotFoundBlurb, sOk);
 	            return;
 	        }
-	
+
+			// create needed directories
+			EnsureDirExists("Assets/Plugins");
+			EnsureDirExists("Assets/Plugins/Android");
+
+			// Delete old libraries, to avoid duplicate symbols
+			DeleteDirIfExists(libProjDestDir);
+			DeleteFileIfExists(libProjDestDirv30);
+
 	        // check that the Google Play Services lib project is there
-	        if (!System.IO.Directory.Exists(libProjPath) || !System.IO.File.Exists(libProjAM)) {
-	            Debug.LogError("Google Play Services lib project not found at: " + libProjPath);
-	            EditorUtility.DisplayDialog(sLibProjNotFound,
-	                sLibProjNotFoundBlurb, sOk);
-	            return;
-	        }
-	        
-	        // check lib project version
-	        if (!CheckAndWarnAboutGmsCoreVersion(libProjAM)) {
-	            return;
-	        }
-	
-	        // create needed directories
-	        EnsureDirExists("Assets/Plugins");
-	        EnsureDirExists("Assets/Plugins/Android");
-	
-	        // clear out the destination library project
-	        DeleteDirIfExists(libProjDestDir);
-	
-	        // Copy Google Play Services library
-	        FileUtil.CopyFileOrDirectory(libProjPath, libProjDestDir);
+			if (System.IO.Directory.Exists (libProjPath) || System.IO.File.Exists (libProjAM)) {
+				// Old Google Play Services directory structure
+				// Copy the full jar into the project 
+
+				// Check lib project version
+				if (!CheckAndWarnAboutGmsCoreVersion(libProjAM)) {
+					return;
+				}
+
+				// Clear out the destination library project
+				DeleteDirIfExists(libProjDestDir);
+
+				// Copy Google Play Services library
+				FileUtil.CopyFileOrDirectory(libProjPath, libProjDestDir);
+			} else {
+				if (System.IO.File.Exists (libProjPathv30)) {
+					// New Google Play Services directory structure
+					// Copy the .aar file that contains the needed classes
+					FileInfo libProjFile = new FileInfo(libProjPathv30);
+					libProjFile.CopyTo(libProjDestDirv30,true);
+				} else {
+					Debug.LogError ("Google Play Services lib project not found at: " + libProjPath);
+					EditorUtility.DisplayDialog (sLibProjNotFound,
+						sLibProjNotFoundBlurb, sOk);
+					return;
+				}
+			}
 	
 	        // refresh assets, and we're done
 	        AssetDatabase.Refresh();
@@ -239,7 +260,12 @@ namespace ChartboostSDK {
 	            System.IO.Directory.Delete(dir, true);
 	        }
 	    }
-		
+
+		private void DeleteFileIfExists(string file) {
+			if (System.IO.File.Exists (file)) {
+				System.IO.File.Delete (file);
+			}
+		}
 		private string FixSlashes(string path) {
 	        return path.Replace("/", System.IO.Path.DirectorySeparatorChar.ToString());
 	    }

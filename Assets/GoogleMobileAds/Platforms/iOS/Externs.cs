@@ -1,3 +1,19 @@
+// Copyright (C) 2015 Google, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#if UNITY_IOS
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -31,6 +47,9 @@ namespace GoogleMobileAds.iOS
         internal static extern void GADUSetExtra(IntPtr request, string key, string value);
 
         [DllImport("__Internal")]
+        internal static extern void GADUSetRequestAgent(IntPtr request, string requestAgent);
+
+        [DllImport("__Internal")]
         internal static extern void GADURelease(IntPtr obj);
 
         #endregion
@@ -48,12 +67,11 @@ namespace GoogleMobileAds.iOS
         [DllImport("__Internal")]
         internal static extern void GADUSetBannerCallbacks(
                 IntPtr bannerView,
-                IOSBannerClient.GADUAdViewDidReceiveAdCallback adReceivedCallback,
-                IOSBannerClient.GADUAdViewDidFailToReceiveAdWithErrorCallback adFailedCallback,
-                IOSBannerClient.GADUAdViewWillPresentScreenCallback willPresentCallback,
-                IOSBannerClient.GADUAdViewWillDismissScreenCallback willDismissCallback,
-                IOSBannerClient.GADUAdViewDidDismissScreenCallback didDismissCallback,
-                IOSBannerClient.GADUAdViewWillLeaveApplicationCallback willLeaveCallback);
+                BannerClient.GADUAdViewDidReceiveAdCallback adReceivedCallback,
+                BannerClient.GADUAdViewDidFailToReceiveAdWithErrorCallback adFailedCallback,
+                BannerClient.GADUAdViewWillPresentScreenCallback willPresentCallback,
+                BannerClient.GADUAdViewDidDismissScreenCallback didDismissCallback,
+                BannerClient.GADUAdViewWillLeaveApplicationCallback willLeaveCallback);
 
         [DllImport("__Internal")]
         internal static extern void GADUHideBannerView(IntPtr bannerView);
@@ -78,13 +96,12 @@ namespace GoogleMobileAds.iOS
         [DllImport("__Internal")]
         internal static extern void GADUSetInterstitialCallbacks(
                 IntPtr interstitial,
-                IOSInterstitialClient.GADUInterstitialDidReceiveAdCallback adReceivedCallback,
-                IOSInterstitialClient.GADUInterstitialDidFailToReceiveAdWithErrorCallback
+                InterstitialClient.GADUInterstitialDidReceiveAdCallback adReceivedCallback,
+                InterstitialClient.GADUInterstitialDidFailToReceiveAdWithErrorCallback
                         adFailedCallback,
-                IOSInterstitialClient.GADUInterstitialWillPresentScreenCallback willPresentCallback,
-                IOSInterstitialClient.GADUInterstitialWillDismissScreenCallback willDismissCallback,
-                IOSInterstitialClient.GADUInterstitialDidDismissScreenCallback didDismissCallback,
-                IOSInterstitialClient.GADUInterstitialWillLeaveApplicationCallback
+                InterstitialClient.GADUInterstitialWillPresentScreenCallback willPresentCallback,
+                InterstitialClient.GADUInterstitialDidDismissScreenCallback didDismissCallback,
+                InterstitialClient.GADUInterstitialWillLeaveApplicationCallback
                         willLeaveCallback);
 
         [DllImport("__Internal")]
@@ -97,6 +114,127 @@ namespace GoogleMobileAds.iOS
         internal static extern void GADURequestInterstitial(IntPtr interstitial, IntPtr request);
 
         #endregion
+
+        #region Reward based video externs
+
+        [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateRewardBasedVideoAd(IntPtr rewardBasedVideo);
+
+        [DllImport("__Internal")]
+        internal static extern bool GADURewardBasedVideoAdReady(IntPtr rewardBasedVideo);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUShowRewardBasedVideoAd(IntPtr rewardBasedVideo);
+
+        [DllImport("__Internal")]
+        internal static extern void GADURequestRewardBasedVideoAd(
+            IntPtr bannerView, IntPtr request, string adUnitId);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUSetRewardBasedVideoAdCallbacks(
+                IntPtr rewardBasedVideo,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdDidReceiveAdCallback
+                    adReceivedCallback,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdDidFailToReceiveAdWithErrorCallback
+                    adFailedCallback,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdDidOpenCallback didOpenCallback,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdDidStartCallback didStartCallback,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdDidCloseCallback didCloseCallback,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdDidRewardCallback didRewardcallback,
+                RewardBasedVideoAdClient.GADURewardBasedVideoAdWillLeaveApplicationCallback
+                    willLeaveCallback);
+
+        #endregion
+
+        #region AdLoader externs
+
+        [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateAdLoader(
+            IntPtr adLoader, string adUnitId, string[] templateIds, int templateIdsCount,
+            ref NativeAdTypes types);
+
+        [DllImport("__Internal")]
+        internal static extern void GADURequestNativeAd(IntPtr adLoader, IntPtr request);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUSetAdLoaderCallbacks(
+            IntPtr adLoader,
+            AdLoaderClient.GADUAdLoaderDidReceiveNativeCustomTemplateAdCallback adReceivedCallback,
+            AdLoaderClient.GADUAdLoaderDidFailToReceiveAdWithErrorCallback adFailedCallback);
+
+        #endregion
+
+        #region NativeCustomTemplateAd externs
+
+        [DllImport("__Internal")]
+        internal static extern string GADUNativeCustomTemplateAdTemplateID(
+            IntPtr nativeCustomTemplateAd);
+
+        [DllImport("__Internal")]
+        internal static extern string GADUNativeCustomTemplateAdImageAsBytesForKey(
+            IntPtr nativeCustomTemplateAd, string key);
+
+        [DllImport("__Internal")]
+        internal static extern string GADUNativeCustomTemplateAdStringForKey(
+            IntPtr nativeCustomTemplateAd, string key);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUNativeCustomTemplateAdRecordImpression(
+            IntPtr nativeCustomTemplateAd);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUNativeCustomTemplateAdPerformClickOnAssetWithKey(
+            IntPtr nativeCustomTemplateAd, string assetName, bool customClickAction);
+
+        [DllImport("__Internal")]
+        internal static extern IntPtr GADUNativeCustomTemplateAdAvailableAssetKeys(
+            IntPtr nativeCustomTemplateAd);
+
+        [DllImport("__Internal")]
+        internal static extern int GADUNativeCustomTemplateAdNumberOfAvailableAssetKeys(
+            IntPtr nativeCustomTemplateAd);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUSetNativeCustomTemplateAdUnityClient(
+            IntPtr nativeCustomTemplateAd, IntPtr nativeCustomTemplateClient);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUSetNativeCustomTemplateAdCallbacks(
+                IntPtr nativeCustomTemplateAd,
+                CustomNativeTemplateClient.GADUNativeCustomTemplateDidReceiveClick
+                    adClickedCallback);
+
+        #endregion
+
+        #region Native Express externs
+
+        [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateNativeExpressAdView(
+            IntPtr nativeExpressClient, string adUnitId, int width, int height, int positionAtTop);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUSetNativeExpressAdCallbacks(
+            IntPtr bannerView,
+            NativeExpressAdClient.GADUNativeExpressAdViewDidReceiveAdCallback adReceivedCallback,
+            NativeExpressAdClient.GADUNativeExpressAdViewDidFailToReceiveAdWithErrorCallback adFailedCallback,
+            NativeExpressAdClient.GADUNativeExpressAdViewWillPresentScreenCallback willPresentCallback,
+            NativeExpressAdClient.GADUNativeExpressAdViewDidDismissScreenCallback didDismissCallback,
+            NativeExpressAdClient.GADUNativeExpressAdViewWillLeaveApplicationCallback willLeaveCallback);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUHideNativeExpressAdView(IntPtr nativeExpresAdView);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUShowNativeExpressAdView(IntPtr nativeExpresAdView);
+
+        [DllImport("__Internal")]
+        internal static extern void GADURemoveNativeExpressAdView(IntPtr nativeExpresAdView);
+
+        [DllImport("__Internal")]
+        internal static extern void GADURequestNativeExpressAd(IntPtr nativeExpresAdView, IntPtr request);
+
+        #endregion
     }
 }
 
+#endif

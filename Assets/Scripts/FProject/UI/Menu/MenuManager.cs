@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using FProject;
 using GameDataEditor;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MenuManager : MonoBehaviour
     public GameObject weaponShop;
 
     public Transform weaponParent;
-
+    public Transform LoadingT;
     public Transform levelParent;
     protected ChapterItem currentChapterItem;
     protected int selectLevel = -1;
@@ -25,6 +26,12 @@ public class MenuManager : MonoBehaviour
     public bool autoSearchChapterItems = false;
 
     public UIShopTab[] tabs;
+    public AudioSource m_audio;
+    public AudioClip ac_BuyAmmo;
+    public AudioClip ac_NotEnough;
+    public AudioClip ac_WeaponUp;
+
+
     // public Transform templateItem;
     protected Vector3 tempScrollPos;
     protected int currentTabIndex = -1;
@@ -32,6 +39,7 @@ public class MenuManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         UpdateTabDisplay(0);
 
         //Player.CurrentUser.SetLevelRecord(2, 25);
@@ -43,12 +51,33 @@ public class MenuManager : MonoBehaviour
             tabs[i].onChange = OnShopTabChange;
         }
         InitWeapon();
+        if (!LoadingT)
+        {
+            LoadingT = CommonUtils.GetChildComponent<Transform>(transform, "Loading");
+        }
+        if (LoadingT)
+            LoadingT.localPosition = new Vector3(1000, 1000, 1000);
     }
 
     public void Awake()
     {
         Instance = this;
     }
+
+    public void OnEnable()
+    {
+        //显示广告
+        FUGSDK.Ads.Instance.ShowBanner(GoogleMobileAds.Api.AdPosition.Top);
+    }
+
+    public void OnDisable()
+    {
+        //隐藏 条形 广告
+        FUGSDK.Ads.Instance.HideBanner();
+    }
+
+
+
 
     /// <summary>
     /// 更新页面显示
@@ -68,7 +97,7 @@ public class MenuManager : MonoBehaviour
         {
             vp_Utility.Activate(menu);
             vp_Utility.Activate(shop, false);
-            UpdateLevelsDisplay(0);
+            UpdateLevelsDisplay(Player.CurrentUser.LastPlayedScene);
         }
         else
         {
@@ -117,7 +146,7 @@ public class MenuManager : MonoBehaviour
 
     public void OnChapterSelectChange(ChapterItem item, bool selected)
     {
-        Debug.Log(selected);
+        //  Debug.Log(selected);
         if (selected)
         {
             if (currentChapterItem != item)
@@ -258,11 +287,41 @@ public class MenuManager : MonoBehaviour
             DSystem.Instance.currentLevel = selectLevel;
             DSystem.Instance.currentScene = currentChapterItem.chapterId;
             DSystem.Instance.sceneName = currentChapterItem.chapterSceneName;
-            LeanTween.dispatchEvent((int)Events.GAMESTART);
+            Player.CurrentUser.LastPlayedScene = currentChapterItem.chapterId;
+            StartCoroutine(LoadScene(currentChapterItem.chapterSceneName));
+            if (LoadingT)
+                LoadingT.localPosition = Vector3.zero;
         }
+        // LeanTween.dispatchEvent((int)Events.GAMESTART);
+
+
         else
         {
-            Debug.Log("Selec Level Pls.");
+            // Debug.Log("Select Level Pls.");
+            MessageTips.Tips("Please select level!");
+        }
+    }
+    AsyncOperation async = null;
+    IEnumerator LoadScene(string sceneName)
+    {
+        FUGSDK.Ads.Instance.HideBanner();
+        async = SceneManager.LoadSceneAsync(sceneName);
+        async.allowSceneActivation = false;
+        while (async.progress < 0.9f)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        CommonUtils.SetChildActive(LoadingT, "Loading", false);
+        CommonUtils.SetChildActive(LoadingT, "Tap", true);
+    }
+
+
+    public void OnTapToContinue()
+    {
+        if (async != null && async.progress >= 0.9f)
+        {
+            async.allowSceneActivation = true;
         }
     }
 
@@ -330,7 +389,7 @@ public class MenuManager : MonoBehaviour
 
     public void UpdateWeaponItemDisplay()
     {
-        for(int i=0;i<weaponItems.Count;i++)
+        for (int i = 0; i < weaponItems.Count; i++)
         {
             weaponItems[i].UpdateDisplay();
         }
@@ -395,10 +454,13 @@ public class MenuManager : MonoBehaviour
                     }
                     UpdateWeaponDisplay();
                     UpdateWeaponItemDisplay();
+                    m_audio.PlayOneShot(ac_WeaponUp);
                 }
                 else
                 {
                     MessageTips.Tips("Don't have enough money !!");
+                    m_audio.PlayOneShot(ac_NotEnough);
+
                 }
             }
         }
@@ -446,10 +508,13 @@ public class MenuManager : MonoBehaviour
         if (!Player.CurrentUser.IsMoneyEnough(WeaponManager.GetWeaponUpgradePrice(currentWeapon)))
         {
             MessageTips.Tips("Don't have enough money !!");
+            m_audio.PlayOneShot(ac_NotEnough);
+            return;
         }
 
         WeaponManager.UpgradeWeapon(currentWeapon);
         UpdateWeaponDisplay();
+        m_audio.PlayOneShot(ac_WeaponUp);
     }
 
     /// <summary>
@@ -465,10 +530,13 @@ public class MenuManager : MonoBehaviour
         if (WeaponManager.Instance.BuyAmmo(currentWeapon.Id) == -1)
         {
             MessageTips.Tips("Don't have enough money !!");
+            m_audio.PlayOneShot(ac_NotEnough);
+            return;
         }
         else
         {
             UpdateWeaponDisplay();
+            m_audio.PlayOneShot(ac_BuyAmmo);
         }
     }
 

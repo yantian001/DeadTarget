@@ -272,7 +272,7 @@ public class WeaponManager : MonoBehaviour
         if (currentWeapon.currentbullet >= maxCapacity)
             return false;
         int bulletNeed = maxCapacity - currentWeapon.currentbullet;
-        if (currentWeapon.bullet < bulletNeed)
+        if(currentWeapon.bullet <= 0)
         {
             int cost = BuyAmmo(currentWeapon.Id);
             if (cost == -1)
@@ -280,6 +280,10 @@ public class WeaponManager : MonoBehaviour
                 return false;
             }
             LeanTween.dispatchEvent((int)Events.BUYAMMO, cost);
+        }
+        else if (currentWeapon.bullet < bulletNeed)
+        {
+            bulletNeed = currentWeapon.bullet;
         }
         currentWeapon.currentbullet += bulletNeed;
         currentWeapon.bullet -= bulletNeed;

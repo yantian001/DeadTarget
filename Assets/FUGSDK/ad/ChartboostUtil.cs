@@ -58,18 +58,18 @@ namespace FUGSDK
                 GameObject o = new GameObject("Chartboost");
                 chartboost = o.AddComponent<Chartboost>();
             }
-            Chartboost.didDismissRewardedVideo += Chartboost_didDismissRewardedVideo;
-            Chartboost.didCompleteRewardedVideo += Chartboost_didCompleteRewardedVideo;
-            Chartboost.didFailToLoadRewardedVideo += Chartboost_didFailToLoadRewardedVideo;
-            Chartboost.didDisplayRewardedVideo += Chartboost_didDisplayRewardedVideo;
-            Chartboost.didFailToLoadMoreApps += Chartboost_didFailToLoadMoreApps;
-            Chartboost.didCacheMoreApps += Chartboost_didCacheMoreApps;
-            Chartboost.didCloseInterstitial += Chartboost_didCloseInterstitial;
-            Chartboost.setAutoCacheAds(true);
-            Chartboost.cacheInterstitial(CBLocation.Default);
-            Chartboost.cacheInterstitial(CBLocation.HomeScreen);
-            Chartboost.cacheInterstitial(CBLocation.Quit);
-            Chartboost.cacheRewardedVideo(CBLocation.Default);
+            //Chartboost.didDismissRewardedVideo += Chartboost_didDismissRewardedVideo;
+            //Chartboost.didCompleteRewardedVideo += Chartboost_didCompleteRewardedVideo;
+            //Chartboost.didFailToLoadRewardedVideo += Chartboost_didFailToLoadRewardedVideo;
+            //Chartboost.didDisplayRewardedVideo += Chartboost_didDisplayRewardedVideo;
+            //Chartboost.didFailToLoadMoreApps += Chartboost_didFailToLoadMoreApps;
+            //Chartboost.didCacheMoreApps += Chartboost_didCacheMoreApps;
+            //Chartboost.didCloseInterstitial += Chartboost_didCloseInterstitial;
+            //Chartboost.setAutoCacheAds(true);
+            //Chartboost.cacheInterstitial(CBLocation.Default);
+            //Chartboost.cacheInterstitial(CBLocation.HomeScreen);
+            //Chartboost.cacheInterstitial(CBLocation.Quit);
+            //Chartboost.cacheRewardedVideo(CBLocation.Default);
             Chartboost.cacheMoreApps(CBLocation.Default);
 
         }

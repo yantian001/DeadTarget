@@ -84,7 +84,7 @@ namespace ChartboostSDK
 			{
 				// Add the forwardNativesToDalvik meta tag with the value true
 				forwardNativeEventsToDalvikElement = doc.CreateElement("meta-data");
-				forwardNativeEventsToDalvikElement.SetAttribute("name", ns, "unityplayer.ForwardNativesToDalvik");
+				forwardNativeEventsToDalvikElement.SetAttribute("name", ns, "unityplayer.ForwardNativeEventsToDalvik");
 				forwardNativeEventsToDalvikElement.SetAttribute("value", ns,"true");
 				unityActivityElement.AppendChild(forwardNativeEventsToDalvikElement);
 				doc.Save(outputFile);

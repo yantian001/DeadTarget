@@ -57,7 +57,7 @@ namespace FProject
 
         float moveDelay = 0.1f;
 
-        public float STOP_DISTANCE = 2f;
+        public float STOP_DISTANCE = 0.1f;
 
 
         #region eventHandler
@@ -138,6 +138,7 @@ namespace FProject
         public void SetCurrentPoint(Transform wayPoint)
         {
             curWayPoint = wayPoint;
+            
             //throw new NotImplementedException();
         }
 

@@ -101,7 +101,7 @@ public class vp_WeaponShooter : vp_Shooter
 		m_OriginalProjectileSpawnDelay = ProjectileSpawnDelay;  // backup value since it may change at runtime
 
         //get the weapon damage
-        Debug.Log("Awake :"+ name +  this.isActiveAndEnabled);
+       // Debug.Log("Awake :"+ name +  this.isActiveAndEnabled);
 
 	}
 

@@ -5,15 +5,23 @@ namespace FUGSDK
 {
     public delegate void InterstitialClosedEvent();
     public delegate void RewardVedioClosedEvent(bool completed);
-
-
+    [System.Serializable]
+    public class AdsConfig
+    {
+        public string banner = "ca-app-pub-4204987182299137/3274919206";
+        public string interstitial = "ca-app-pub-4204987182299137/4751652407";
+        public string rewarded = "ca-app-pub-4204987182299137/6228385601";
+        public string native = "ca-app-pub-4204987182299137/5669982403";
+    }
 
     public class Ads : MonoBehaviour
     {
-        public string gpBannerId = "ca-app-pub-4204987182299137/5342806003";
-        public string gpIntersititialId = "ca-app-pub-4204987182299137/4167124006";
-        public string iosBannerId = "ca-app-pub-4204987182299137/2550790009";
-        public string iosIntersititialId = "ca-app-pub-4204987182299137/4027523206";
+        #region GooglePlay
+        public AdsConfig googlePlayConfig;
+        #endregion
+        #region iOS
+        public AdsConfig iOSConfig;
+        #endregion
         private static Ads _instance = null;
         public static Ads Instance
         {
@@ -36,6 +44,11 @@ namespace FUGSDK
             }
         }
 
+        //public bool cacheBanner = false;
+        public bool cacheInterstitial = false;
+        public bool cacheRewarded = false;
+        public bool cacheNative = false;
+
         public void Awake()
         {
             if (_instance == null)
@@ -55,11 +68,22 @@ namespace FUGSDK
         {
             ChartboostUtil.Instance.Initialize();
 #if UNITY_ANDROID
-            GoogleAdsUtil.Instance.Initialize(gpBannerId, gpIntersititialId);
+            GoogleAdsUtil.Instance.Initialize(googlePlayConfig);
 #elif UNITY_IPHONE
-            GoogleAdsUtil.Instance.Initialize(iosBannerId, iosIntersititialId);
+            GoogleAdsUtil.Instance.Initialize(iOSConfig);
 #endif
-
+            if (cacheInterstitial)
+            {
+                GoogleAdsUtil.Instance.RequestInterstitial();
+            }
+            if (cacheRewarded)
+            {
+                GoogleAdsUtil.Instance.RequestRewardVedio();
+            }
+            if (cacheNative)
+            {
+                GoogleAdsUtil.Instance.ReqeustNativeExpressAd();
+            }
         }
         /// <summary>
         /// 在位置p上显示横幅广告
@@ -67,9 +91,13 @@ namespace FUGSDK
         /// <param name="p">显示横幅的位置，默认是在中下</param>
         public void ShowBanner(AdPosition p = AdPosition.Bottom)
         {
-            GoogleAdsUtil.Instance.ShowBanner(p, AdSize.SmartBanner);
+            GoogleAdsUtil.Instance.ShowBanner(p, AdSize.Banner);
         }
 
+        public void HideBanner()
+        {
+            GoogleAdsUtil.Instance.HideBanner();
+        }
 
         #region 插页广告
         /// <summary>
@@ -78,15 +106,15 @@ namespace FUGSDK
         /// <param name="closeEvent">广告关闭时执行的方法，默认为null</param>
         public void ShowInterstitial(InterstitialClosedEvent closeEvent = null)
         {
-            if (ChartboostUtil.Instance.HasInterstitialOnDefault())
-            {
-                ChartboostUtil.Instance.ShowInterstitialOnDefault(closeEvent);
-            }
-            else if (GoogleAdsUtil.Instance.HasInterstital())
+
+            if (GoogleAdsUtil.Instance.HasInterstital())
             {
                 GoogleAdsUtil.Instance.ShowInterstital(closeEvent);
             }
-
+            //else if (ChartboostUtil.Instance.HasInterstitialOnDefault())
+            //{
+            //    ChartboostUtil.Instance.ShowInterstitialOnDefault(closeEvent);
+            //}
         }
 
         /// <summary>
@@ -95,7 +123,7 @@ namespace FUGSDK
         /// <returns></returns>
         public bool HasIntersititial()
         {
-            return GoogleAdsUtil.Instance.HasInterstital() || ChartboostUtil.Instance.HasInterstitialOnDefault();
+            return GoogleAdsUtil.Instance.HasInterstital();// || ChartboostUtil.Instance.HasInterstitialOnDefault();
         }
         #endregion
 
@@ -106,12 +134,9 @@ namespace FUGSDK
         /// <returns></returns>
         public bool HasRewardVedio()
         {
-#if UNITY_EDITOR
-
-            return true;
-#else
-            return ChartboostUtil.Instance.HasGameOverVideo();
-#endif
+            //return false;
+            return GoogleAdsUtil.Instance.HasRewardedVedio();//|| ChartboostUtil.Instance.HasGameOverVideo();
+            // return ChartboostUtil.Instance.HasGameOverVideo();
         }
         /// <summary>
         /// 播放视频奖励广告，并在广告播放完后执行ev方法，
@@ -120,14 +145,14 @@ namespace FUGSDK
         /// <param name="ev"></param>
         public void ShowRewardVedio(RewardVedioClosedEvent ev)
         {
-#if UNITY_EDITOR
-            if (ev != null)
+            if (!GoogleAdsUtil.Instance.ShowRewardVedio(ev))
             {
-                ev(true);
+                //if (!ChartboostUtil.Instance.ShowGameOverVideo(ev))
+                //{
+                ev(false);
+                //}
             }
-#else
-            ChartboostUtil.Instance.ShowGameOverVideo(ev);
-#endif
+
         }
         #endregion
 
@@ -139,6 +164,7 @@ namespace FUGSDK
         /// <returns></returns>
         public bool HasMoreApp()
         {
+            //return false;
             return ChartboostUtil.Instance.HasMoreAppOnDefault();
         }
 

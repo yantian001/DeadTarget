@@ -57,7 +57,7 @@ namespace FProject
             {
                 eventHandler.Attack.TryStop();
             }
-           // print("Move Start!");
+            // print("Move Start!");
             obstacle.enabled = false;
             vp_Timer.In(0.1f, SetNavigationDestination);
         }
@@ -121,13 +121,17 @@ namespace FProject
         }
 
         bool isStanding = false;
+        protected Vector3 lastPosition;
+        protected float stayTime = 0.0f;
         protected void LateUpdate()
         {
             if (!eventHandler.Start.Active)
                 return;
             if (!arriveTarget)
             {
-                if ((Vector3.Distance(zombieBase.curWayPoint.position, transform.position) < zombieBase.STOP_DISTANCE))
+                float distance = Vector3.Distance(zombieBase.curWayPoint.position, new Vector3(transform.position.x, zombieBase.curWayPoint.position.y, transform.position.z));
+                if (distance <= zombieBase.STOP_DISTANCE)
+                //if (aget.enabled && aget.isOnNavMesh && aget.pathStatus == NavMeshPathStatus.PathComplete && aget.remainingDistance <= zombieBase.STOP_DISTANCE)
                 {
                     arriveTarget = true;
                 }
@@ -160,6 +164,28 @@ namespace FProject
                         eventHandler.Attack.TryStart();
                 }
 
+            }
+            ///处理卡死 
+            if (eventHandler.Move.Active)
+            {
+                if (lastPosition == transform.position)
+                {
+                    stayTime += Time.deltaTime;
+                    if(stayTime > 1)
+                    {
+                        float distance = Vector3.Distance(zombieBase.curWayPoint.position, new Vector3(transform.position.x, zombieBase.curWayPoint.position.y, transform.position.z));
+                        arriveTarget = true;
+                    }
+                    if (stayTime > 8)
+                    {
+                        transform.SendMessage("Die");
+                    }
+                }
+                else
+                {
+                    lastPosition = transform.position;
+                    stayTime = 0;
+                }
             }
         }
 

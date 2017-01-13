@@ -9,8 +9,8 @@ namespace FProject
 
         public AppearanceType appearanceType;
         public Transform[] target;
-        private int[] targetCheckedList;
-        private int currentCheck;
+        private static List<int> targetCheckedList = new List<int>();
+        private static int currentCheck;
 
         private void OnDrawGizmos()
         {
@@ -18,15 +18,33 @@ namespace FProject
             Gizmos.DrawSphere(base.transform.position, 0.1f);
             Gizmos.matrix = Matrix4x4.TRS(base.transform.position, base.transform.rotation, base.transform.lossyScale);
             Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+            foreach (Transform t in target)
+            {
+                if (t)
+                {
+                    Gizmos.matrix = Matrix4x4.TRS(t.position, t.rotation, t.lossyScale);
+                    Gizmos.DrawSphere(Vector3.zero, 0.1f);
+                }
+            }
+        }
+
+        public static void InitCheck()
+        {
+            currentCheck = 0;
+            targetCheckedList.Clear();
         }
 
         private void InitCheckList()
         {
-            targetCheckedList = new int[target.Length];
-            for (int i = 0; i < targetCheckedList.Length; i++)
+            //targetCheckedList = new int[target.Length];
+            for(int i=0;i<target.Length;i++)
             {
-                targetCheckedList[i] = 0;
+                targetCheckedList.Add(0);
             }
+            //for (int i = 0; i < targetCheckedList.; i++)
+            //{
+            //    targetCheckedList[i] = 0;
+            //}
         }
 
         /// <summary>
@@ -39,7 +57,7 @@ namespace FProject
             {
                 return null;
             }
-            if (targetCheckedList == null || targetCheckedList.Length == 0)
+            if (targetCheckedList == null || targetCheckedList.Count == 0)
             {
                 InitCheckList();
             }

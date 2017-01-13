@@ -1,3 +1,17 @@
+// Copyright (C) 2015 Google, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,37 +20,37 @@ namespace GoogleMobileAds.Api
 {
     public class AdRequest
     {
-        public const string Version = "2.3.1";
+        public const string Version = "3.1.3";
         public const string TestDeviceSimulator = "SIMULATOR";
 
         public class Builder
         {
-            private List<string> testDevices;
-            private HashSet<string> keywords;
-            private DateTime? birthday;
-            private Gender? gender;
-            private bool? tagForChildDirectedTreatment;
-            private Dictionary<string, string> extras;
+            internal List<string> TestDevices { get; private set; }
+            internal HashSet<string> Keywords { get; private set; }
+            internal DateTime? Birthday { get; private set; }
+            internal Gender? Gender { get; private set; }
+            internal bool? ChildDirectedTreatmentTag { get; private set; }
+            internal Dictionary<string, string> Extras { get; private set; }
 
             public Builder()
             {
-                this.testDevices = new List<string>();
-                this.keywords = new HashSet<string>();
-                this.birthday = null;
-                this.gender = null;
-                this.tagForChildDirectedTreatment = null;
-                this.extras = new Dictionary<string, string>();
+                this.TestDevices = new List<string>();
+                this.Keywords = new HashSet<string>();
+                this.Birthday = null;
+                this.Gender = null;
+                this.ChildDirectedTreatmentTag = null;
+                this.Extras = new Dictionary<string, string>();
             }
 
             public Builder AddKeyword(string keyword)
             {
-                this.keywords.Add(keyword);
+                this.Keywords.Add(keyword);
                 return this;
             }
 
             public Builder AddTestDevice(string deviceId)
             {
-                this.testDevices.Add(deviceId);
+                this.TestDevices.Add(deviceId);
                 return this;
             }
 
@@ -47,140 +61,44 @@ namespace GoogleMobileAds.Api
 
             public Builder SetBirthday(DateTime birthday)
             {
-                this.birthday = birthday;
+                this.Birthday = birthday;
                 return this;
             }
 
             public Builder SetGender(Gender gender)
             {
-                this.gender = gender;
+                this.Gender = gender;
                 return this;
             }
 
             public Builder TagForChildDirectedTreatment(bool tagForChildDirectedTreatment)
             {
-                this.tagForChildDirectedTreatment = tagForChildDirectedTreatment;
+                this.ChildDirectedTreatmentTag = tagForChildDirectedTreatment;
                 return this;
             }
 
             public Builder AddExtra(string key, string value)
             {
-                this.extras.Add(key, value);
+                this.Extras.Add(key, value);
                 return this;
-            }
-
-            internal List<string> TestDevices
-            {
-                get
-                {
-                    return testDevices;
-                }
-            }
-
-            internal HashSet<string> Keywords
-            {
-                get
-                {
-                    return keywords;
-                }
-            }
-
-            internal DateTime? Birthday
-            {
-                get
-                {
-                    return birthday;
-                }
-            }
-
-            internal Gender? Gender
-            {
-                get
-                {
-                    return gender;
-                }
-            }
-
-            internal bool? ChildDirectedTreatmentTag
-            {
-                get
-                {
-                    return tagForChildDirectedTreatment;
-                }
-            }
-
-            internal Dictionary<string, string> Extras
-            {
-                get
-                {
-                    return extras;
-                }
             }
         }
 
-        private List<string> testDevices;
-        private HashSet<string> keywords;
-        private DateTime? birthday;
-        private Gender? gender;
-        private bool? tagForChildDirectedTreatment;
-        private Dictionary<string, string> extras;
+        public List<string> TestDevices  { get; private set; }
+        public HashSet<string> Keywords  { get; private set; }
+        public DateTime? Birthday  { get; private set; }
+        public Gender? Gender  { get; private set; }
+        public bool? TagForChildDirectedTreatment { get; private set; }
+        public Dictionary<string, string> Extras  { get; private set; }
 
         private AdRequest(Builder builder)
         {
-            testDevices = builder.TestDevices;
-            keywords = builder.Keywords;
-            birthday = builder.Birthday;
-            gender = builder.Gender;
-            tagForChildDirectedTreatment = builder.ChildDirectedTreatmentTag;
-            extras = builder.Extras;
-        }
-
-        public List<string> TestDevices
-        {
-            get
-            {
-                return testDevices;
-            }
-        }
-
-        public HashSet<string> Keywords
-        {
-            get
-            {
-                return keywords;
-            }
-        }
-
-        public DateTime? Birthday
-        {
-            get
-            {
-                return birthday;
-            }
-        }
-
-        public Gender? Gender
-        {
-            get
-            {
-              return gender;
-            }
-        }
-
-        public bool? TagForChildDirectedTreatment
-        {
-            get
-            {
-                return tagForChildDirectedTreatment;
-            }
-        }
-
-        public Dictionary<string, string> Extras
-        {
-            get
-            {
-                return extras;
-            }
+            this.TestDevices = new List<string>(builder.TestDevices);
+            this.Keywords = new HashSet<string>(builder.Keywords);
+            this.Birthday = builder.Birthday;
+            this.Gender = builder.Gender;
+            this.TagForChildDirectedTreatment = builder.ChildDirectedTreatmentTag;
+            this.Extras = new Dictionary<string, string>(builder.Extras);
         }
     }
 }

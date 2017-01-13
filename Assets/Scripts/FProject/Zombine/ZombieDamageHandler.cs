@@ -8,12 +8,14 @@ namespace FProject
         static Vector3 ZOMBIE_HP_SLIDER_POSITION = new Vector3(10000, 10000, 0);
 
         public Transform headT;
+
         protected Transform hpTranform;
         /// <summary>
         /// 血条离摄像机的距离
         /// </summary>
         protected float fomat;///
         protected float hpShowTime = 0.0f;
+
         ZombieEventHandler _eventHandler;
         ZombieEventHandler eventHandler
         {
@@ -26,14 +28,26 @@ namespace FProject
         }
         public override void Die()
         {
-            vp_Utility.Activate(hpTranform.gameObject, false);
-            hpTranform.position = new Vector3(10000, 1000, 0);
-            DestroyImmediate(hpTranform.gameObject);
+            if (hpTranform)
+            {
+                vp_Utility.Activate(hpTranform.gameObject, false);
+                hpTranform.position = new Vector3(10000, 1000, 0);
+                DestroyImmediate(hpTranform.gameObject);
+            }
+
             if (!eventHandler.Die.Active)
                 eventHandler.Die.TryStart();
             GamePlay.Instance.ZombieDie(this.GetComponent<ZombineBase>());
             vp_Utility.Destroy(this.gameObject, 2f);
-
+            if (m_Audio != null)
+            {
+                m_Audio.pitch = Time.timeScale;
+                m_Audio.PlayOneShot(DeathSound);
+            }
+            //if(asDead)
+            //{
+            //    asDead.Play();
+            //}
         }
 
         protected override void CacheColider()

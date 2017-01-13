@@ -1,87 +1,107 @@
+// Copyright (C) 2015 Google, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
+
 using GoogleMobileAds.Common;
 
 namespace GoogleMobileAds.Api
 {
-    public class BannerView : IAdListener
+    public class BannerView
     {
-        private IGoogleMobileAdsBannerClient client;
+        private IBannerClient client;
 
-        // These are the ad callback events that can be hooked into.
-        public event EventHandler<EventArgs> AdLoaded = delegate {};
-        public event EventHandler<AdFailedToLoadEventArgs> AdFailedToLoad = delegate {};
-        public event EventHandler<EventArgs> AdOpened = delegate {};
-        public event EventHandler<EventArgs> AdClosing = delegate {};
-        public event EventHandler<EventArgs> AdClosed = delegate {};
-        public event EventHandler<EventArgs> AdLeftApplication = delegate {};
-
-        // Create a BannerView and add it into the view hierarchy.
+        // Creates a BannerView and adds it to the view hierarchy.
         public BannerView(string adUnitId, AdSize adSize, AdPosition position)
         {
-            client = GoogleMobileAdsClientFactory.GetGoogleMobileAdsBannerClient(this);
+            client = GoogleMobileAdsClientFactory.BuildBannerClient();
             client.CreateBannerView(adUnitId, adSize, position);
+
+            this.client.OnAdLoaded += (sender, args) =>
+                {
+                    if(this.OnAdLoaded != null)
+                    {
+                        this.OnAdLoaded(this, args);
+                    }
+                };
+
+            this.client.OnAdFailedToLoad += (sender, args) =>
+                {
+                    if(this.OnAdFailedToLoad != null)
+                    {
+                        this.OnAdFailedToLoad(this, args);
+                    }
+                };
+
+            this.client.OnAdOpening += (sender, args) =>
+                {
+                    if(this.OnAdOpening != null)
+                    {
+                        this.OnAdOpening(this, args);
+                    }
+                };
+
+            this.client.OnAdClosed += (sender, args) =>
+                {
+                    if(this.OnAdClosed != null)
+                    {
+                        this.OnAdClosed(this, args);
+                    }
+                };
+
+            this.client.OnAdLeavingApplication += (sender, args) =>
+                {
+                    if(this.OnAdLeavingApplication != null)
+                    {
+                        this.OnAdLeavingApplication(this, args);
+                    }
+                };
         }
 
-        // Load an ad into the BannerView.
+        // These are the ad callback events that can be hooked into.
+        public event EventHandler<EventArgs> OnAdLoaded;
+
+        public event EventHandler<AdFailedToLoadEventArgs> OnAdFailedToLoad;
+
+        public event EventHandler<EventArgs> OnAdOpening;
+
+        public event EventHandler<EventArgs> OnAdClosed;
+
+        public event EventHandler<EventArgs> OnAdLeavingApplication;
+
+        // Loads an ad into the BannerView.
         public void LoadAd(AdRequest request)
         {
             client.LoadAd(request);
         }
 
-        // Hide the BannerView from the screen.
+        // Hides the BannerView from the screen.
         public void Hide()
         {
             client.HideBannerView();
         }
 
-        // Show the BannerView on the screen.
+        // Shows the BannerView on the screen.
         public void Show()
         {
             client.ShowBannerView();
         }
 
-        // Destroy the BannerView.
+        // Destroys the BannerView.
         public void Destroy()
         {
             client.DestroyBannerView();
         }
-
-        #region IAdListener implementation
-
-        // The following methods are invoked from an IGoogleMobileAdsClient. Forward these calls
-        // to the developer.
-        void IAdListener.FireAdLoaded()
-        {
-            AdLoaded(this, EventArgs.Empty);
-        }
-
-        void IAdListener.FireAdFailedToLoad(string message)
-        {
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs();
-            args.Message = message;
-            AdFailedToLoad(this, args);
-        }
-
-        void IAdListener.FireAdOpened()
-        {
-            AdOpened(this, EventArgs.Empty);
-        }
-
-        void IAdListener.FireAdClosing()
-        {
-            AdClosing(this, EventArgs.Empty);
-        }
-
-        void IAdListener.FireAdClosed()
-        {
-            AdClosed(this, EventArgs.Empty);
-        }
-
-        void IAdListener.FireAdLeftApplication()
-        {
-            AdLeftApplication(this, EventArgs.Empty);
-        }
-
-        #endregion
     }
 }

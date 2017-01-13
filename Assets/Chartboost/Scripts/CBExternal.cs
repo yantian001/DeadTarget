@@ -644,6 +644,12 @@ namespace ChartboostSDK {
 				case "Supersonic":
 					library = 6;
 					break;
+				case "AdMob":
+					library = 7;
+					break;
+				case "HyprMX":
+					library = 8;
+					break;
 			}
 			_chartBoostSetMediation(library, version);
 			Log("iOS : setMediation to = " + mediator.ToString() + " " + version);

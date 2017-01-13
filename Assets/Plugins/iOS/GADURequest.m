@@ -1,8 +1,5 @@
 // Copyright 2014 Google Inc. All Rights Reserved.
 
-@import Foundation;
-@import GoogleMobileAds;
-
 #import "GADURequest.h"
 
 @implementation GADURequest
@@ -57,7 +54,7 @@
   request.keywords = self.keywords;
   request.birthday = self.birthday;
   request.gender = self.gender;
-  request.requestAgent = @"unity";
+  request.requestAgent = self.requestAgent;
   [request tagForChildDirectedTreatment:self.tagForChildDirectedTreatment];
   GADExtras *extras = [[GADExtras alloc] init];
   extras.additionalParameters = self.extras;

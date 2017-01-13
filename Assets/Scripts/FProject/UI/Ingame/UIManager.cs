@@ -73,6 +73,12 @@ namespace FProject
                 comboTextScaleOrigin = comboText.transform.localScale;
         }
 
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            vp_TimeUtility.Paused = false;
+        }
+
 
 
         #region Pause
@@ -167,6 +173,7 @@ namespace FProject
             vp_Utility.Activate(controlUI, false);
             var panel = winUI.GetComponent<UIPanel>();
             panel.alpha = 0;
+            Player.CurrentUser.UseMoney(-record.TotalReward);
             TweenAlpha.Begin(winUI, 1f, 1).AddOnFinished(() =>
             {
                 //显示zombile Kill reward

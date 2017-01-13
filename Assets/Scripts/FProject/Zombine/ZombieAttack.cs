@@ -30,7 +30,7 @@ namespace FProject
         {
             Vector3 vector = playerT.transform.position - base.transform.position;
             float num = Vector3.Angle(vector, base.transform.forward);
-            print("rotate toward player :" + num);
+            // print("rotate toward player :" + num);
             if (num > 5f)
             {
                 Quaternion quaternion = base.transform.rotation;

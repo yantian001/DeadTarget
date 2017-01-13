@@ -21,7 +21,7 @@ namespace FProject
     {
         #region Static Member
 
-        public readonly static Vector3 ZOMBIE_HIDDEN_PLACE = new Vector3(1000, 1000, 1000);
+        public readonly static Vector3 ZOMBIE_HIDDEN_PLACE = new Vector3(10000, 10000, 10000);
 
         #endregion
 
@@ -69,6 +69,9 @@ namespace FProject
         GameRecord record = new GameRecord();
 
         public float comboInterval = 10f;
+        public AudioClip acSuccess;
+        public AudioClip acFail;
+        public AudioClip acZombieSpwaned;
         float currentRemain = 0f;
         bool isCombo = false;
         int currentCombo = 0;
@@ -150,7 +153,9 @@ namespace FProject
             SetGameStatu(GameStatu.Init);
             InitBallteData();
             InitZombieWaves();
+            ZombiePlacement.InitCheck();
             record = new GameRecord();
+            Debug.Log("init Gameplay!");
         }
 
         public void InitBallteData()
@@ -418,7 +423,7 @@ namespace FProject
             }
             else
             {
-                Debug.Log("Game Failure!");
+                // Debug.Log("Game Failure!");
                 this.Failure();
             }
         }
@@ -446,7 +451,7 @@ namespace FProject
                             {
                                 currentZombieSpwanRemain += waves[i].remainZombie;
                             }
-                            var c = StartCoroutine(StartWaveNormal(5f));
+                            var c = StartCoroutine(StartWaveNormal(2f));
 
                         }
                         else
@@ -466,6 +471,7 @@ namespace FProject
             SetGameStatu(GameStatu.GameSuccess);
             timeScaleTarget = 0.1f;
             vp_TimeUtility.FadeTimeScale(0.1f, 5f);
+            Player.CurrentUser.SceneLevelComplete(DSystem.Instance.currentScene, DSystem.Instance.currentLevel);
             vp_Timer.In(0.5f, () =>
             {
                 vp_TimeUtility.FadeTimeScale(1, 5f);
@@ -480,11 +486,30 @@ namespace FProject
         {
             vp_TimeUtility.TimeScale = 1;
             UIManager.Instance.ShowWinUI(record);
+            if (acSuccess)
+            {
+                LeanAudio.play(acSuccess);
+            }
+            ShowAds();
+        }
+
+        void ShowAds()
+        {
+            vp_Timer.In(1f, () =>
+            {
+                FUGSDK.Ads.Instance.ShowInterstitial();
+
+            });
         }
 
         private void Failure()
         {
             UIManager.Instance.ShowGameOverUI();
+            if (acFail)
+            {
+                LeanAudio.play(acFail);
+            }
+            ShowAds();
         }
 
 
@@ -564,6 +589,10 @@ namespace FProject
             zomBase.SetCurrentPoint(wayPoint);
             zomBase.SetOriginSpeed(speed);
             zomBase.StartAction(appType, pos);
+            if (acZombieSpwaned)
+            {
+                LeanAudio.play(acZombieSpwaned);
+            }
             aliveZombies.Add(zomBase);
         }
 
